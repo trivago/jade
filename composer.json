@@ -1,0 +1,33 @@
+{
+    "name": "trivago/jade",
+    "description": "A simple but yet powerful library to expose your entities through JSON API.",
+    "license": "Apache-2.0",
+    "type": "library",
+    "autoload": {
+        "psr-4": {
+            "Trivago\\Jade\\": "Trivago/Jade"
+        },
+        "exclude-from-classmap": [
+            "/Tests/"
+        ]
+    },
+    "require": {
+        "neomerx/json-api": "^1.0",
+        "doctrine/orm": "^2.5",
+        "symfony/symfony": "^3.0",
+        "doctrine/doctrine-bundle": "^1.6"
+    },
+    "authors": [
+        {
+            "name": "trivago",
+            "homepage": "https://github.com/trivago/jade/graphs/contributors"
+        }
+    ],
+    "require-dev": {
+        "phpunit/phpunit": "^5.7",
+        "phpspec/prophecy": "^1.7",
+        "fzaninotto/faker": "^1.7",
+        "php-di/phpdoc-reader": "^2.0",
+        "codeception/codeception": "^2.3"
+    }
+}

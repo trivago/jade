@@ -1,0 +1,71 @@
+services:
+    trivago_jade.json_api_controller:
+        class: Trivago\Jade\Application\Framework\JadeBundle\Controller\JsonApiController
+        arguments:
+            - "@trivago_jade.resource_config_provider"
+            - "@trivago_jade.resource_repository_provider"
+            - "@trivago_jade.request_factory"
+            - "@trivago_jade.listener_manager"
+            - "@request_stack"
+        public: true
+        tags: ['controller.service_arguments']
+
+    trivago_jade.listener_manager:
+        class: Trivago\Jade\Application\Listener\ListenerManager
+
+    trivago_jade.json_api_route_loader:
+        class: Trivago\Jade\Application\Framework\JadeBundle\Routing\JsonApiLoader
+        arguments: ["@trivago_jade.resource_config_provider"]
+        tags: [routing.loader]
+
+    trivago_jade.resource_config_validator:
+        class: Trivago\Jade\Application\JsonApi\Config\ResourceConfigValidator
+
+    trivago_jade.resource_config_provider:
+        class: Trivago\Jade\Application\JsonApi\Config\ResourceConfigProvider
+        arguments:
+            - "@trivago_jade.resource_config_validator"
+            - "%json_api_resources%"
+            - "%json_api_default_read_role%"
+            - "%json_api_default_manipulate_role%"
+            - "%json_api_create_method%"
+
+    trivago_jade.json_api_request_validator:
+        class: Trivago\Jade\Application\JsonApi\Schema\RequestValidator
+
+    trivago_jade.resource_repository_provider:
+        class: Trivago\Jade\Application\Framework\JadeBundle\ResourceRepository\ResourceRepositoryProvider
+        arguments:
+            - "@service_container"
+            - "@doctrine"
+            - "@trivago_jade.resource_config_provider"
+
+    trivago_jade.field_resolver:
+        class: Trivago\Jade\Domain\ResourceManager\FieldResolver
+        arguments:
+            - "@trivago_jade.resource_repository_provider"
+
+    trivago_jade.generic_resource_manager:
+        class: Trivago\Jade\Domain\ResourceManager\GenericResourceManager
+        arguments:
+            - "@trivago_jade.field_resolver"
+            - "%json_api_create_method%"
+            - "%json_api_on_update_method%"
+
+    trivago_jade.request_factory:
+        class: Trivago\Jade\Application\JsonApi\Request\RequestFactory
+        arguments:
+            - "@trivago_jade.json_api_request_validator"
+            - "@trivago_jade.resource_config_provider"
+            - "%json_api_max_per_page%"
+            - "%json_api_default_per_page%"
+
+    trivago_jade.resource_mapper.runtime_mapper:
+        class: Trivago\Jade\Application\JsonApi\Mapping\RuntimeResourceMapper
+        arguments:
+            - "@trivago_jade.resource_config_provider"
+            - "@security.authorization_checker"
+            - "@security.token_storage"
+
+    trivago_jade.resource_mapper:
+        alias: trivago_jade.resource_mapper.runtime_mapper
