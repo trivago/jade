@@ -1,0 +1,8 @@
+actor: ApiTester
+modules:
+    enabled:
+        - REST:
+            depends: Symfony
+            part: Json
+        - Symfony:
+            var_path: var

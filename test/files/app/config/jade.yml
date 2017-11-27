@@ -1,0 +1,17 @@
+trivago_jade:
+    debug: false
+    read:
+        max_relationship_depth: 2
+    manipulate:
+        include_relationships: true
+    resources:
+        -
+            name: users
+            entity_class: AppBundle\Entity\User
+            allowed_actions: [create, update, delete]
+            relationships:
+                -
+                    name: friends
+                    type: users
+            value_objects:
+                email: AppBundle\Value\Email

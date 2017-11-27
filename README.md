@@ -87,6 +87,10 @@ Security concerns
 -------------
 [Read it here](docs/security_concerns.md)
 
+Tests
+-------------
+[Read it here](docs/tests.md)
+
 Missing features
 ----------------
 * Allow choosing which fields to be included.

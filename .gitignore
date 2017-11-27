@@ -4,3 +4,6 @@ vendor/
 composer.lock
 phpunit.xml
 composer.phar
+/test/*
+!/test/files
+!/test/run.sh

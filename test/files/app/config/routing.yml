@@ -1,0 +1,3 @@
+json_api_routes:
+    resource: .
+    type: json_api

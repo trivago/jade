@@ -1,0 +1,25 @@
+users:
+    moein:
+        name: Moein
+        email: moein@test.com
+        isAdmin: true
+    miguel:
+        name: Miguel
+        email: miguel@test.com
+        isAdmin: true
+    albert:
+        name: Albert
+        email: albert@test.com
+        isAdmin: true
+    jose:
+        name: Jose
+        email: jose@test.com
+        isAdmin: false
+    martin:
+        name: Martin
+        email: martin@test.com
+        isAdmin: false
+    javier:
+        name: Javier
+        email: javier@test.com
+        isAdmin: false
