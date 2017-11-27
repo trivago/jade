@@ -3,7 +3,7 @@ Jade(Json Api Doctrine Exposer)
 
 What is it?
 -------------
-trivago JADE is a library created in an effort to create a simple way to create json api server using doctrine entities.
+Jade is a library created in an effort to create a simple way to create Json API server using doctrine entities.
 It supports all the CRUD functionality like filtering, sorting and including relationships.
 You just define the entities then using the configuration expose different routes.
 
@@ -13,7 +13,7 @@ Another library?
 -------------
 Before starting developing this library we went through other available libraries even thinking about contributing to them.
 But the issue was that customizing those libraries to our needs was complicated and sometimes needed too much effort to even set it up.
-In case of JADE in 5 minutes you can have a fully functional api running.
+In case of Jade in 5 minutes you can have a fully functional API running.
 
 Getting started
 -------------
@@ -23,9 +23,9 @@ First install the library:
 
 `composer require trivago/jade`
 
-And add the bundle to the kernel:
+Next add the bundle to the kernel:
 
-```
+```php
 public function registerBundles()
 {
         $bundles = [
@@ -34,6 +34,15 @@ public function registerBundles()
             ...
         ];
 }
+```
+
+And then add the routing
+```yaml
+json_api_routes:
+    prefix: /api
+    resource: .
+    type: json_api
+
 ```
 
 And then you have to setup the configuration.
