@@ -311,6 +311,9 @@ class RequestFactory
     private function validateKeys($errorKey, $array, $keys)
     {
         foreach ($keys as $key) {
+            if (!is_array($array) ) {
+                throw InvalidRequest::createWithMessage('data.'.$errorKey, 'invalid_format', sprintf('Expected array but received ', gettype($array)));
+            }
             if (!array_key_exists($key, $array)) {
                 throw InvalidRequest::createWithMessage('data.'.$errorKey, 'invalid_format', sprintf('Missing key %s in %s', $key, $errorKey));
             }
