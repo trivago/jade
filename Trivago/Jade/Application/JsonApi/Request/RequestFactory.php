@@ -35,6 +35,7 @@ use Trivago\Jade\Domain\Resource\Path;
 use Trivago\Jade\Domain\Resource\Sort;
 use Trivago\Jade\Domain\Resource\SortCollection;
 use Trivago\Jade\Domain\Resource\SortDirections;
+use Trivago\Jade\Domain\ResourceManager\Bag\NullRelationship;
 use Trivago\Jade\Domain\ResourceManager\Bag\ResourceAttributeBag;
 use Trivago\Jade\Domain\ResourceManager\Bag\ResourceRelationshipBag;
 use Trivago\Jade\Domain\ResourceManager\Bag\ToManyRelationship;
@@ -156,7 +157,11 @@ class RequestFactory
             $resourceName,
             $resourceId,
             $this->createAttributeBag($resourceName, $request->request->get('data')),
-            $this->createRelationshipBag($request->request->get('data'), $request->request->get('data_as_object'))
+            $this->createRelationshipBag(
+                $request->request->get('data'),
+                $request->request->get('data_as_object'),
+                true
+            )
         );
 
         if (!count($request->getRelationships()->getAllRelationshipNames()) && !count($request->getAttributes()->getAllAttributeNames())) {
@@ -179,7 +184,11 @@ class RequestFactory
         return new CreateRequest(
             $resourceName,
             $this->createAttributeBag($resourceName, $request->get('data')),
-            $this->createRelationshipBag($request->get('data'), $request->request->get('data_as_object'))
+            $this->createRelationshipBag(
+                $request->get('data'),
+                $request->request->get('data_as_object'),
+                false
+            )
         );
     }
 
@@ -323,9 +332,10 @@ class RequestFactory
     /**
      * @param array $data
      * @param \stdClass $dataAsObject
+     * @param bool $acceptNull
      * @return ResourceRelationshipBag
      */
-    private function createRelationshipBag($data, $dataAsObject)
+    private function createRelationshipBag($data, $dataAsObject, $acceptNull)
     {
         $resourceConfig = $this->resourceConfigProvider->getResourceConfig($data['type']);
         $rawRelationships = isset($data['relationships']) ? $data['relationships'] : [];
@@ -335,10 +345,15 @@ class RequestFactory
             if (!$resourceConfig->hasRelationship($relationshipName)) {
                 throw InvalidRequest::createWithMessage('data.relationships.'.$relationshipName, 'invalid_path', sprintf('No relationship on %s called %s', $data['type'], $relationshipName));
             }
-            if (!isset($rawRelationship['data'])) {
+            if (!array_key_exists('data', $rawRelationship)) {
                 throw InvalidRequest::createWithMessage('data.relationships.'.$relationshipName, 'invalid_format', 'Missing data key in relationship '.$relationshipName);
             }
             $rawRelationship = $rawRelationship['data'];
+            if ($acceptNull && null === $rawRelationship) {
+                $relationships[$relationshipName] = new NullRelationship();
+
+                continue;
+            }
             $relationshipType = $this->resourceConfigProvider->getResourceConfig($data['type'])->getRelationship($relationshipName)->getType();
             $entityClass = $this->resourceConfigProvider->getResourceConfig($relationshipType)->getEntityClass();
             if (isset($dataAsObject->relationships->$relationshipName->data) && is_object($dataAsObject->relationships->$relationshipName->data)) {

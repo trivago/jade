@@ -21,6 +21,7 @@
 
 namespace Trivago\Jade\Domain\ResourceManager;
 
+use Trivago\Jade\Domain\ResourceManager\Bag\NullRelationship;
 use Trivago\Jade\Domain\ResourceManager\Bag\Relationship;
 use Trivago\Jade\Domain\ResourceManager\Bag\ResourceAttributeBag;
 use Trivago\Jade\Domain\ResourceManager\Bag\ResourceRelationshipBag;
@@ -105,6 +106,9 @@ class FieldResolver
      */
     public function getRelationshipValue(Relationship $relationship)
     {
+        if ($relationship instanceof NullRelationship) {
+            return null;
+        }
         $repository = $this->repositoryProvider->getRepository($relationship->getEntityClass());
         if ($relationship instanceof ToOneRelationship) {
             $entity = $repository->fetchOneResource($relationship->getEntityId(), []);
