@@ -349,11 +349,15 @@ class RequestFactory
                 throw InvalidRequest::createWithMessage('data.relationships.'.$relationshipName, 'invalid_format', 'Missing data key in relationship '.$relationshipName);
             }
             $rawRelationship = $rawRelationship['data'];
-            if ($acceptNull && null === $rawRelationship) {
-                $relationships[$relationshipName] = new NullRelationship();
+            if (null === $rawRelationship) {
+                if ($acceptNull) {
+                    $relationships[$relationshipName] = new NullRelationship();
 
-                continue;
+                    continue;
+                }
+                throw InvalidRequest::createWithMessage('data.relationships.'.$relationshipName.'.data', 'invalid_value', 'Relationship can not be null in create request.');
             }
+            $this->validateKeys('data.relationships.'.$relationshipName.'.data', $rawRelationship, ['id', 'type']);
             $relationshipType = $this->resourceConfigProvider->getResourceConfig($data['type'])->getRelationship($relationshipName)->getType();
             $entityClass = $this->resourceConfigProvider->getResourceConfig($relationshipType)->getEntityClass();
             if (isset($dataAsObject->relationships->$relationshipName->data) && is_object($dataAsObject->relationships->$relationshipName->data)) {
