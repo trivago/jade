@@ -239,6 +239,9 @@ class RequestFactory
                 $path = $sort;
             }
 
+            // Validating the "path" is not under "excluded_attributes" config section
+            $this->validateExcludedPaths($resourceConfig, 'data.filter', $path);
+
             $sortCollection->addSort(new Sort($resourceConfig->getRealPath($path), $direction));
         }
 
@@ -265,12 +268,29 @@ class RequestFactory
                 $this->parseFilters($resourceConfig, $filter, $rawFilter['filters'], $errorKey);
             } else {
                 $this->validateExpressionFilter(implode('.', $currentErrorKey), $rawFilter);
+
+                // Validating the "path" is not under "excluded_attributes" config section
+                $this->validateExcludedPaths($resourceConfig, 'data.filter', $rawFilter['path']);
+                
                 $compositeFilter->addFilter(new ExpressionFilter(
                     $resourceConfig->getRealPath($rawFilter['path']),
                     $rawFilter['type'],
                     $rawFilter['value']
                 ));
             }
+        }
+    }
+
+    /**
+     * Validating the "path" is not under "excluded_attributes" config section
+     * @param ResourceConfig $resourceConfig
+     * @param $key
+     * @param $path
+     */
+    private function validateExcludedPaths(ResourceConfig $resourceConfig, $key, $path)
+    {
+        if($resourceConfig->isAttributeExcluded($resourceConfig->getRealPath($path))){
+            throw InvalidRequest::createWithMessage($key, 'invalid_path', 'The path "'. $path .'" is a non rendered column. Try to remove this property from the "excluded_attributes" config section');
         }
     }
 
