@@ -32,6 +32,8 @@ class ExpressionFilterTypes
         self::LESS_THAN_EQUAL,
         self::CONTAINS,
         self::NOT_CONTAINS,
+        self::ARRAY_CONTAINS,
+        self::ARRAY_NOT_CONTAINS,
         self::IN,
         self::NOT_IN,
     ];
@@ -44,6 +46,8 @@ class ExpressionFilterTypes
     const LESS_THAN_EQUAL = 'lte';
     const CONTAINS = 'c';
     const NOT_CONTAINS = 'nc';
+    const ARRAY_CONTAINS = 'ac';
+    const ARRAY_NOT_CONTAINS = 'anc';
     const IN = 'in';
     const NOT_IN = 'nin';
 

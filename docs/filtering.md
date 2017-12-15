@@ -29,10 +29,12 @@ EXPRESSION_FILTER_TYPE can be any of these values:
 * LESS_THAN_EQUAL: lte
 * CONTAINS: c
 * NOT_CONTAINS: nc
+* ARRAY_CONTAINS: ac
+* ARRAY_NOT_CONTAINS: anc
 * IN: in
 * NOT_IN: nin
 
-Each filter will be translated to a comparison expression in sql
+Most filters will be translated to a comparison expression in sql
 * EQUAL_TO: 
   * If the value is null: ${PATH} IS NULL
   * If the value is not null: ${PATH} = "${VALUE}"
@@ -47,6 +49,10 @@ Each filter will be translated to a comparison expression in sql
 * NOT_CONTAINS: ${PATH} NOT LIKE "%${PATH}%"
 * IN: ${PATH} IN (${VALUE})   => ${VALUE} must be an array
 * NOT_IN: ${PATH} NOT IN (${VALUE}) => ${VALUE} must be an array
+
+These filters find a ${VALUE} into the array ${PATH}, like an inverse IN filter
+* ARRAY_CONTAINS
+* ARRAY_NOT_CONTAINS
 
 ~~A simple example with http query:~~
 Http query is not supported anymore.

@@ -21,6 +21,7 @@
 
 namespace Trivago\Jade\Infrastructure\Repository;
 
+use DevJadeBundle\Form\DataTransformer\ArrayToDelimitedStringTransformer;
 use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityRepository;
@@ -129,10 +130,26 @@ class DoctrineResourceRepository implements ResourceRepository, ResourceCounter
         $idsConstraint = new Constraint();
         $idsConstraint->setPerPage(PHP_INT_MAX);
         $idBasedQueryBuilder = $this->createQuery($prefix, $relationships, $idsConstraint, $sortCollection);
-        $idBasedQueryBuilder->where($prefix.'.id IN (:ids)')->setParameters(['ids' => $ids]);
+        $idBasedQueryBuilder->where($prefix . '.id IN (:ids)')->setParameters(['ids' => $ids]);
 
         $result = $idBasedQueryBuilder->getQuery()->execute();
 
+        // Verifying if ARRAY_CONTAINS or ARRAY_NOT_CONTAINS was used
+        // and filter the results
+        $arrContainsFilters = $this->getArrayContainsFilters($constraint->getFilterCollection());
+        if (count($arrContainsFilters)) {
+            foreach ($arrContainsFilters as $key => $filter) {
+                $result = array_filter($result, function ($entityRow) use ($filter) {
+                    $getFunction = "get" . ucfirst($filter->getPath()->getColumnName());
+                    if ($filter->getType() === ExpressionFilterTypes::ARRAY_CONTAINS) {
+                        return in_array($filter->getValue(), $entityRow->$getFunction());
+                    } else {
+                        return !in_array($filter->getValue(), $entityRow->$getFunction());
+                    }
+                });
+            }
+
+        }
         return $result;
     }
 
@@ -160,10 +177,10 @@ class DoctrineResourceRepository implements ResourceRepository, ResourceCounter
         $queryBuilder = $this->doctrineRepository
             ->createQueryBuilder($prefix);
         self::addRelationships($queryBuilder, $prefix, $relationships);
-        $queryBuilder->select($queryBuilder->expr()->countDistinct($prefix.'.id'));
+        $queryBuilder->select($queryBuilder->expr()->countDistinct($prefix . '.id'));
         $this->addFilters($queryBuilder, $filterCollection);
 
-        return (int) $queryBuilder
+        return (int)$queryBuilder
             ->getQuery()
             ->getSingleScalarResult();
     }
@@ -183,7 +200,7 @@ class DoctrineResourceRepository implements ResourceRepository, ResourceCounter
                 $relationshipChain[] = $subRelationship;
                 $newFullAlias = self::buildAlias($alias, $relationshipChain);
                 if (!in_array($newFullAlias, $addedRelationships)) {
-                    $queryBuilder->leftJoin($fullAlias.'.'.$subRelationship, $newFullAlias);
+                    $queryBuilder->leftJoin($fullAlias . '.' . $subRelationship, $newFullAlias);
                     $queryBuilder->addSelect($newFullAlias);
                     $addedRelationships[] = $newFullAlias;
                 }
@@ -201,7 +218,7 @@ class DoctrineResourceRepository implements ResourceRepository, ResourceCounter
     {
         $separator = count($relationshipChain) ? '_' : '';
 
-        return $rootAlias.$separator.implode('__', $relationshipChain);
+        return $rootAlias . $separator . implode('__', $relationshipChain);
     }
 
     /**
@@ -218,7 +235,7 @@ class DoctrineResourceRepository implements ResourceRepository, ResourceCounter
         self::addRelationships($queryBuilder, $prefix, $relationships);
 
         $queryBuilder->setMaxResults($constraint->getPerPage());
-        $queryBuilder->setFirstResult(($constraint->getPageNumber()-1)*$constraint->getPerPage());
+        $queryBuilder->setFirstResult(($constraint->getPageNumber() - 1) * $constraint->getPerPage());
 
         $this->addFilters($queryBuilder, $constraint->getFilterCollection());
 
@@ -236,9 +253,22 @@ class DoctrineResourceRepository implements ResourceRepository, ResourceCounter
      */
     private function addFilters(QueryBuilder $queryBuilder, CompositeFilter $compositeFilter)
     {
-        if (count($compositeFilter->getFilters())) {
+        if (count($compositeFilter->getFilters()) > count($this->getArrayContainsFilters($compositeFilter))
+        ) {
             $queryBuilder->where($this->createFilterExpressions($queryBuilder, $compositeFilter, 'value_'));
         }
+    }
+
+    /**
+     * @param CompositeFilter $compositeFilter
+     * @return mixed
+     */
+    private function getArrayContainsFilters(CompositeFilter $compositeFilter)
+    {
+        $arrContainsFilters = array_filter($compositeFilter->getFilters(), function ($filter) {
+            return $filter->getType() === ExpressionFilterTypes::ARRAY_CONTAINS || $filter->getType() === ExpressionFilterTypes::ARRAY_NOT_CONTAINS;
+        });
+        return $arrContainsFilters;
     }
 
     /**
@@ -251,42 +281,46 @@ class DoctrineResourceRepository implements ResourceRepository, ResourceCounter
     {
         $expressions = [];
         foreach ($compositeFilter->getFilters() as $key => $filter) {
-            if ($filter instanceof CompositeFilter) {
-                $expressions[] = $this->createFilterExpressions($queryBuilder, $filter, $baseKey.$key.'_');
-                continue;
-            }
-            /** @var ExpressionFilter $filter */
+            if ($filter->getType() !== ExpressionFilterTypes::ARRAY_CONTAINS &&
+                $filter->getType() !== ExpressionFilterTypes::ARRAY_NOT_CONTAINS
+            ) {
+                if ($filter instanceof CompositeFilter) {
+                    $expressions[] = $this->createFilterExpressions($queryBuilder, $filter, $baseKey . $key . '_');
+                    continue;
+                }
+                /** @var ExpressionFilter $filter */
 
-            $alias = self::buildAlias('r', $filter->getPath()->getRelationshipChain());
-            $column = $this->joinAliasAndColumnName($alias, $filter->getPath()->getColumnName());
-            $value = $filter->getValue();
-            if (in_array($filter->getType(), [ExpressionFilterTypes::CONTAINS, ExpressionFilterTypes::NOT_CONTAINS])) {
-                $value = "%$value%";
-            }
+                $alias = self::buildAlias('r', $filter->getPath()->getRelationshipChain());
+                $column = $this->joinAliasAndColumnName($alias, $filter->getPath()->getColumnName());
+                $value = $filter->getValue();
+                if (in_array($filter->getType(), [ExpressionFilterTypes::CONTAINS, ExpressionFilterTypes::NOT_CONTAINS])) {
+                    $value = "%$value%";
+                }
 
-            $operator = self::NON_NULL_OPERATORS_MAP[$filter->getType()];
+                $operator = self::NON_NULL_OPERATORS_MAP[$filter->getType()];
 
-            $isNullComparison = ($filter->isType(ExpressionFilterTypes::EQUAL_TO)
-                || $filter->isType(ExpressionFilterTypes::NOT_EQUAL_TO))
-                && null === $filter->getValue();
-            $isCollectionFilter = $filter->isType(ExpressionFilterTypes::IN)
-                || $filter->isType(ExpressionFilterTypes::NOT_IN);
+                $isNullComparison = ($filter->isType(ExpressionFilterTypes::EQUAL_TO)
+                        || $filter->isType(ExpressionFilterTypes::NOT_EQUAL_TO))
+                    && null === $filter->getValue();
+                $isCollectionFilter = $filter->isType(ExpressionFilterTypes::IN)
+                    || $filter->isType(ExpressionFilterTypes::NOT_IN);
 
-            if ($isCollectionFilter) {
-                $expressions[] = "$column $operator (:$baseKey$key)";
-            } elseif ($isNullComparison) {
-                $operator = self::NULL_OPERATORS_MAP[$filter->getType()];
-                $expressions[] = "$column $operator";
-            } else {
-                $expressions[] = "$column $operator :$baseKey$key";
-            }
+                if ($isCollectionFilter) {
+                    $expressions[] = "$column $operator (:$baseKey$key)";
+                } elseif ($isNullComparison) {
+                    $operator = self::NULL_OPERATORS_MAP[$filter->getType()];
+                    $expressions[] = "$column $operator";
+                } else {
+                    $expressions[] = "$column $operator :$baseKey$key";
+                }
 
-            if (!$isNullComparison) {
-                $queryBuilder->setParameter($baseKey.$key, $value);
+                if (!$isNullComparison) {
+                    $queryBuilder->setParameter($baseKey . $key, $value);
+                }
             }
         }
 
-        return '('.implode(' '.strtoupper($compositeFilter->getType()).' ', $expressions).')';
+        return '(' . implode(' ' . strtoupper($compositeFilter->getType()) . ' ', $expressions) . ')';
     }
 
     private function joinAliasAndColumnName($alias, $columnName)
@@ -294,7 +328,7 @@ class DoctrineResourceRepository implements ResourceRepository, ResourceCounter
         $this->validateIdentifier($alias);
         $this->validateIdentifier($columnName);
 
-        return $alias.'.'.$columnName;
+        return $alias . '.' . $columnName;
     }
 
     private function validateIdentifier($string)
