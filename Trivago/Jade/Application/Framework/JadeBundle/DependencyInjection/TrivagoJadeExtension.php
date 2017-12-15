@@ -55,6 +55,7 @@ class TrivagoJadeExtension extends Extension
         $container->setParameter('json_api_default_manipulate_role', $config['security']['default_manipulate_role']);
         $container->setParameter('json_api_default_read_role', $config['security']['default_read_role']);
         $container->setParameter('json_api_security_enabled', $config['security']['enabled']);
+        $container->setParameter('json_api_strict_filtering_and_sorting', $config['security']['strict_filtering_and_sorting']);
         $container->setParameter('json_api_max_per_page', $config['read']['max_per_page']);
         $container->setParameter('json_api_default_per_page', $config['read']['default_per_page']);
         $container->setParameter('json_api_fetch_total_count', $config['read']['fetch_total_count']);

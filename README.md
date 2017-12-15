@@ -97,4 +97,4 @@ Missing features
 * Validate the request for extra keys that are not valid.
 * Create the relationship urls.
 * Contain for a path that is string works fine. Find a new filter type name for path being an array that contains value.
-* Use ResourceMapper to avoid filtering or sorting on columns that are not rendered [security]
+* [IMPROVED] Use ResourceMapper to avoid filtering or sorting on columns that are not rendered [security]

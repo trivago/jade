@@ -13,6 +13,9 @@ trivago_jade:
         # If you do not use security in your project just set this value to false.
         enabled:              false
 
+        # If you want to allow sorting and filtering using excluded attributes (columns) just set this value to false.
+        strict_filtering_and_sorting: true
+        
         # Default role for creating/updating any resource. This can be changed on each resource.
         default_manipulate_role: null
 

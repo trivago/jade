@@ -8,6 +8,7 @@ trivago_jade:
     debug: "%kernel.debug%"
     security:
         enabled: true
+        strict_filtering_and_sorting: true
         default_manipulate_role: ROLE_ADMIN
         default_read_role: ROLE_USER
     read:
