@@ -306,10 +306,9 @@ class RequestFactory
      */
     private function validateExcludedPaths(ResourceConfig $resourceConfig, $key, $path)
     {
-        if($this->strictFilteringAndSorting && $resourceConfig->isAttributeExcluded($resourceConfig->getRealPath($path))){
-            throw InvalidRequest::createWithMessage($key, 'invalid_path',
-                'The path "'. $path .'" is a non rendered column. 
-                Try to remove this property from the "excluded_attributes" config section or set "strict_filtering_and_sorting" to false');
+        if ($this->strictFilteringAndSorting && $resourceConfig->isAttributeExcluded($resourceConfig->getRealPath($path))) {
+            throw InvalidRequest::createWithMessage($key, 'invalid_path', sprintf('The path "%s" is a non rendered column. 
+                Try to remove this property from the "excluded_attributes" config section or set "strict_filtering_and_sorting" to false', $path));
         }
     }
 
