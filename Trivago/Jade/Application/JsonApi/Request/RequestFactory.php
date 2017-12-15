@@ -317,10 +317,7 @@ class RequestFactory
     {
         if ($this->strictFilteringAndSorting && $resourceConfig->isAttributeExcluded($resourceConfig->getRealPath($path))) {
             if ($this->jsonApiDebug) {
-                throw InvalidRequest::createWithMessage($key, 'invalid_path', sprintf('The path "%s" is a not rendered column. 
-                Try to remove this property from the "excluded_attributes" config section or set "strict_filtering_and_sorting" to false', $path));
-            } else {
-                throw InvalidRequest::createWithMessage($key, 'invalid_path', 'Some excluded column path have been used to filter or sort');
+                throw InvalidRequest::createWithMessage($key, 'invalid_path', sprintf('There is no path called %s', $path));
             }
         }
     }
@@ -335,7 +332,7 @@ class RequestFactory
         try {
             ExpressionFilter::validate($rawFilter['type'], $rawFilter['value']);
         } catch (\InvalidArgumentException $e) {
-            throw InvalidRequest::createWithMessage('data.' . $errorKey, 'invalid_format', $e->getMessage());
+            throw InvalidRequest::createWithMessage('data.'.$errorKey, 'invalid_format', $e->getMessage());
         }
     }
 
@@ -347,10 +344,10 @@ class RequestFactory
     {
         $this->validateKeys($errorKey, $rawFilter, ['type', 'filters']);
         if (!CompositeFilterTypes::isValid($rawFilter['type'])) {
-            throw InvalidRequest::createWithMessage('data.' . $errorKey . '.type', 'invalid_format', sprintf('Invalid filter type %s passed', $rawFilter['type']));
+            throw InvalidRequest::createWithMessage('data.'.$errorKey.'.type', 'invalid_format', sprintf('Invalid filter type %s passed', $rawFilter['type']));
         }
         if (!is_array($rawFilter['filters'])) {
-            throw InvalidRequest::createWithMessage('data.' . $errorKey . '.filters', 'invalid_format', 'Key "filters" should be an array');
+            throw InvalidRequest::createWithMessage('data.'.$errorKey.'.filters', 'invalid_format', 'Key "filters" should be an array');
         }
     }
 
@@ -362,11 +359,11 @@ class RequestFactory
     private function validateKeys($errorKey, $array, $keys)
     {
         foreach ($keys as $key) {
-            if (!is_array($array)) {
-                throw InvalidRequest::createWithMessage('data.' . $errorKey, 'invalid_format', sprintf('Expected array but received ', gettype($array)));
+            if (!is_array($array) ) {
+                throw InvalidRequest::createWithMessage('data.'.$errorKey, 'invalid_format', sprintf('Expected array but received ', gettype($array)));
             }
             if (!array_key_exists($key, $array)) {
-                throw InvalidRequest::createWithMessage('data.' . $errorKey, 'invalid_format', sprintf('Missing key %s in %s', $key, $errorKey));
+                throw InvalidRequest::createWithMessage('data.'.$errorKey, 'invalid_format', sprintf('Missing key %s in %s', $key, $errorKey));
             }
         }
     }
@@ -385,10 +382,10 @@ class RequestFactory
         $relationships = [];
         foreach ($rawRelationships as $relationshipName => $rawRelationship) {
             if (!$resourceConfig->hasRelationship($relationshipName)) {
-                throw InvalidRequest::createWithMessage('data.relationships.' . $relationshipName, 'invalid_path', sprintf('No relationship on %s called %s', $data['type'], $relationshipName));
+                throw InvalidRequest::createWithMessage('data.relationships.'.$relationshipName, 'invalid_path', sprintf('No relationship on %s called %s', $data['type'], $relationshipName));
             }
             if (!array_key_exists('data', $rawRelationship)) {
-                throw InvalidRequest::createWithMessage('data.relationships.' . $relationshipName, 'invalid_format', 'Missing data key in relationship ' . $relationshipName);
+                throw InvalidRequest::createWithMessage('data.relationships.'.$relationshipName, 'invalid_format', 'Missing data key in relationship '.$relationshipName);
             }
             $rawRelationship = $rawRelationship['data'];
             if (null === $rawRelationship) {
@@ -397,31 +394,31 @@ class RequestFactory
 
                     continue;
                 }
-                throw InvalidRequest::createWithMessage('data.relationships.' . $relationshipName . '.data', 'invalid_value', 'Relationship can not be null in create request.');
+                throw InvalidRequest::createWithMessage('data.relationships.'.$relationshipName.'.data', 'invalid_value', 'Relationship can not be null in create request.');
             }
-            $this->validateKeys('data.relationships.' . $relationshipName . '.data', $rawRelationship, ['id', 'type']);
+            $this->validateKeys('data.relationships.'.$relationshipName.'.data', $rawRelationship, ['id', 'type']);
             $relationshipType = $this->resourceConfigProvider->getResourceConfig($data['type'])->getRelationship($relationshipName)->getType();
             $entityClass = $this->resourceConfigProvider->getResourceConfig($relationshipType)->getEntityClass();
             if (isset($dataAsObject->relationships->$relationshipName->data) && is_object($dataAsObject->relationships->$relationshipName->data)) {
                 if (!isset($rawRelationship['id'])) {
-                    throw InvalidRequest::createWithMessage('data.relationships.' . $relationshipName . '.data.id', 'invalid_value', 'Missing id of a relationship ' . $relationshipName);
+                    throw InvalidRequest::createWithMessage('data.relationships.'.$relationshipName.'.data.id', 'invalid_value', 'Missing id of a relationship '.$relationshipName);
                 }
                 $id = $rawRelationship['id'];
                 $this->validateRelationshipType(
                     $rawRelationship,
                     $relationshipName,
-                    'data.relationships.' . $relationshipName . '.data.type'
+                    'data.relationships.'.$relationshipName.'.data.type'
                 );
                 $relationships[$relationshipName] = new ToOneRelationship($relationshipType, $entityClass, $id);
                 continue;
             }
             $ids = [];
             foreach ($rawRelationship as $key => $singleRelationship) {
-                $this->validateRelationshipType(
-                    $singleRelationship,
-                    $relationshipName,
-                    sprintf('data.relationships.%s.data[%d].type', $relationshipName, $key)
-                );
+               $this->validateRelationshipType(
+                   $singleRelationship,
+                   $relationshipName,
+                   sprintf('data.relationships.%s.data[%d].type', $relationshipName, $key)
+               );
 
                 $ids[] = $singleRelationship['id'];
             }
@@ -443,9 +440,9 @@ class RequestFactory
                 $relationshipPath,
                 'invalid_format',
                 'Invalid type for the relationship '
-                . $relationshipName
-                . '. Valid value(s) are '
-                . implode(',', $this->resourceConfigProvider->getResourceConfig($relationshipData['type'])->getValidTypes())
+                    .$relationshipName
+                    .'. Valid value(s) are '
+                    .implode(',', $this->resourceConfigProvider->getResourceConfig($relationshipData['type'])->getValidTypes())
             );
         }
     }
@@ -480,17 +477,17 @@ class RequestFactory
             $resourceConfig = $rootResourceConfig;
             foreach ($path->getRelationshipChain() as $relationshipName) {
                 if (!$resourceConfig->hasRelationship($relationshipName)) {
-                    throw InvalidRequest::createWithMessage($key, 'invalid_path', 'There is no relationship called ' . $relationshipName);
+                    throw InvalidRequest::createWithMessage($key, 'invalid_path', 'There is no relationship called '.$relationshipName);
                 }
                 $resourceConfig = $this->resourceConfigProvider->getResourceConfig($resourceConfig->getRelationship($relationshipName)->getType());
             }
             $reflectionClass = new \ReflectionClass($resourceConfig->getEntityClass());
             if (!$reflectionClass->hasProperty($path->getColumnName())) {
-                throw InvalidRequest::createWithMessage($key, 'invalid_path', 'There is no path called ' . $path->getFullPath());
+                throw InvalidRequest::createWithMessage($key, 'invalid_path', 'There is no path called '.$path->getFullPath());
             }
 
             if (!$canBeRelationship && $resourceConfig->hasRelationship($path->getColumnName())) {
-                throw InvalidRequest::createWithMessage($key, 'invalid_path', 'The path can not be a relationship. Received ' . $path->getFullPath());
+                throw InvalidRequest::createWithMessage($key, 'invalid_path', 'The path can not be a relationship. Received '.$path->getFullPath());
             }
         }
     }
@@ -517,7 +514,7 @@ class RequestFactory
                 continue;
             }
             if (array_search($resourcePath, $possiblePaths) === false) {
-                InvalidRequest::throwWithMessage(sprintf('data.filters[%d].path', $key), 'invalid_filter_path', 'You have to include the relationship to be able to filter with it. Missing ' . $resourcePath);
+                InvalidRequest::throwWithMessage(sprintf('data.filters[%d].path', $key), 'invalid_filter_path', 'You have to include the relationship to be able to filter with it. Missing '.$resourcePath);
             }
         }
     }
