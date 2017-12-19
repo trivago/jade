@@ -64,21 +64,38 @@ class RequestFactory
     private $defaultPerPage;
 
     /**
+     * @var boolean
+     */
+    private $strictFilteringAndSorting;
+
+    /**
+     * @var boolean
+     */
+    private $jsonApiDebug;
+
+    /**
      * @param RequestValidator $requestValidator
      * @param ResourceConfigProvider $resourceConfigProvider
      * @param int $maxPerPage
      * @param int $defaultPerPage
+     * @param boolean $strictFilteringAndSorting
+     * @param boolean $jsonApiDebug
      */
     public function __construct(
         RequestValidator $requestValidator,
         ResourceConfigProvider $resourceConfigProvider,
         $maxPerPage,
-        $defaultPerPage
-    ) {
+        $defaultPerPage,
+        $strictFilteringAndSorting,
+        $jsonApiDebug
+    )
+    {
         $this->requestValidator = $requestValidator;
         $this->resourceConfigProvider = $resourceConfigProvider;
         $this->maxPerPage = $maxPerPage;
         $this->defaultPerPage = $defaultPerPage;
+        $this->strictFilteringAndSorting = $strictFilteringAndSorting;
+        $this->jsonApiDebug = $jsonApiDebug;
     }
 
     /**
@@ -248,6 +265,9 @@ class RequestFactory
                 $path = $sort;
             }
 
+            // Validating the "path" is not under "excluded_attributes" config section
+            $this->validateExcludedPaths($resourceConfig, 'data.filter', $path);
+
             $sortCollection->addSort(new Sort($resourceConfig->getRealPath($path), $direction));
         }
 
@@ -274,11 +294,32 @@ class RequestFactory
                 $this->parseFilters($resourceConfig, $filter, $rawFilter['filters'], $errorKey);
             } else {
                 $this->validateExpressionFilter(implode('.', $currentErrorKey), $rawFilter);
+
+                // Validating the "path" is not under "excluded_attributes" config section
+                $this->validateExcludedPaths($resourceConfig, 'data.filter', $rawFilter['path']);
+
                 $compositeFilter->addFilter(new ExpressionFilter(
                     $resourceConfig->getRealPath($rawFilter['path']),
                     $rawFilter['type'],
                     $rawFilter['value']
                 ));
+            }
+        }
+    }
+
+    /**
+     * Validating the "path" is not under "excluded_attributes" config section
+     * @param ResourceConfig $resourceConfig
+     * @param string $key
+     * @param string $path
+     */
+    private function validateExcludedPaths(ResourceConfig $resourceConfig, $key, $path)
+    {
+        if ($this->strictFilteringAndSorting && $resourceConfig->isAttributeExcluded($resourceConfig->getRealPath($path))) {
+            if ($this->jsonApiDebug) {
+                throw InvalidRequest::createWithMessage($key, 'invalid_path', sprintf('There is no path called %s', $path));
+            } else {
+                throw InvalidRequest::createWithMessage($key, 'invalid_path', 'Invalid path');
             }
         }
     }
@@ -444,7 +485,7 @@ class RequestFactory
             }
             $reflectionClass = new \ReflectionClass($resourceConfig->getEntityClass());
             if (!$reflectionClass->hasProperty($path->getColumnName())) {
-                throw InvalidRequest::createWithMessage($key, 'invalid_path', 'There is no path called '. $path->getFullPath());
+                throw InvalidRequest::createWithMessage($key, 'invalid_path', 'There is no path called '.$path->getFullPath());
             }
 
             if (!$canBeRelationship && $resourceConfig->hasRelationship($path->getColumnName())) {

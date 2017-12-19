@@ -59,6 +59,8 @@ services:
             - "@trivago_jade.resource_config_provider"
             - "%json_api_max_per_page%"
             - "%json_api_default_per_page%"
+            - "%json_api_strict_filtering_and_sorting%"
+            - "%json_api_debug%"
 
     trivago_jade.resource_mapper.runtime_mapper:
         class: Trivago\Jade\Application\JsonApi\Mapping\RuntimeResourceMapper
