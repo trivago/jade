@@ -318,6 +318,8 @@ class RequestFactory
         if ($this->strictFilteringAndSorting && $resourceConfig->isAttributeExcluded($resourceConfig->getRealPath($path))) {
             if ($this->jsonApiDebug) {
                 throw InvalidRequest::createWithMessage($key, 'invalid_path', sprintf('There is no path called %s', $path));
+            } else {
+                throw InvalidRequest::createWithMessage($key, 'invalid_path', 'Invalid path');
             }
         }
     }
