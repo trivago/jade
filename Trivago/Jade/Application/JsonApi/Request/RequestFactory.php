@@ -317,9 +317,17 @@ class RequestFactory
     {
         if ($this->strictFilteringAndSorting && $resourceConfig->isAttributeExcluded($resourceConfig->getRealPath($path))) {
             if ($this->jsonApiDebug) {
-                throw InvalidRequest::createWithMessage($key, 'invalid_path', sprintf('There is no path called %s', $path));
+                throw InvalidRequest::createWithMessage(
+                    $key,
+                    'invalid_path',
+                    sprintf(
+                        'The path "%s" is excluded. Either set security.strict_filtering_and_sorting to false'.
+                            ' or remove the attribute from the excluded attributes!',
+                        $path
+                    )
+                );
             } else {
-                throw InvalidRequest::createWithMessage($key, 'invalid_path', 'Invalid path');
+                throw InvalidRequest::createWithMessage($key, 'invalid_path', 'There is no path called '.$path);
             }
         }
     }
