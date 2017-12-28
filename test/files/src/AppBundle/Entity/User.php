@@ -48,6 +48,19 @@ class User
     private $friends = [];
 
     /**
+     * Just a field that will be excluded in response
+     * @ORM\Column(type="string")
+     * @var string
+     */
+    private $hash;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="User")
+     * @var User
+     */
+    private $bestFriend;
+
+    /**
      * sqlite doesn't accept not null without default value.
      * @ORM\Column(type="string", nullable=false, options={"default"=""})
      */
@@ -70,6 +83,7 @@ class User
         $user->setName($name);
         $user->email = $email;
         $user->isAdmin = $isAdmin;
+        $user->hash = uniqid();
 
         return $user;
     }
@@ -127,4 +141,24 @@ class User
         $this->friends = $friends;
     }
 
+    /**
+     * @param User|null $bestFriend
+     */
+    public function setBestFriend(User $bestFriend = null)
+    {
+        $this->bestFriend = $bestFriend;
+    }
+
+    /**
+     * @return User
+     */
+    public function getBestFriend()
+    {
+        return $this->bestFriend;
+    }
+
+    public function getHash()
+    {
+        return $this->hash;
+    }
 }

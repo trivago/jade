@@ -13,5 +13,10 @@ trivago_jade:
                 -
                     name: friends
                     type: users
+                -
+                    name: bestFriend
+                    type: users
+            excluded_attributes:
+                - hash
             value_objects:
                 email: AppBundle\Value\Email

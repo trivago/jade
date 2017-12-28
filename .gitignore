@@ -6,4 +6,5 @@ phpunit.xml
 composer.phar
 /test/*
 !/test/files
-!/test/run.sh
+!/test/init.sh
+!/test/run_tests.sh

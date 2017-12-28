@@ -2,10 +2,12 @@
 
 namespace JsonApi;
 
+use Api\Client;
+
 class Manager
 {
-    /** @var \ApiTester */
-    protected $I;
+    /** @var Client */
+    protected $client;
 
     /** @var MockedDataManager */
     protected $dataManager;
@@ -16,15 +18,15 @@ class Manager
     private function __construct(){}
 
     /**
-     * @param \ApiTester $I
+     * @param Client $client
      * @param MockedDataManager $dataManager
      * @param Collection $collection
      * @return Manager
      */
-    public static function create(\ApiTester $I, MockedDataManager $dataManager, Collection $collection)
+    public static function create(Client $client, MockedDataManager $dataManager, Collection $collection)
     {
         $manager = new self();
-        $manager->I = $I;
+        $manager->client = $client;
         $manager->dataManager = $dataManager;
         $manager->collection = $collection;
 
@@ -36,19 +38,19 @@ class Manager
         return $this->getCollection()->getResourceName();
     }
 
-    public function getEntityData($key)
+    public function getEntityAttributes($key)
     {
-        return $this->dataManager->get($this->getResourceName(), $key);
+        return $this->dataManager->get($this->getResourceName(), $key)['static_properties'];
     }
 
     public function createEntity($id, $key)
     {
-        $entity = Entity::create($id, $this->getResourceName())->setAttributes($this->getEntityData($key));
-        $this->I->wantToDoSuccessfulPost(
+        $entity = Entity::create($id, $this->getResourceName())->setAttributes($this->getEntityAttributes($key));
+        $this->client->wantToDoSuccessfulPost(
             "Create an entity with type {$this->getResourceName()} and key $key",
             $this->getResourceName(),
             [],
-            RequestBuilder::create($this->getResourceName(), $this->getEntityData($key)),
+            RequestBuilder::create($this->getResourceName(), $this->getEntityAttributes($key)),
             $entity
         );
         $this->collection->addEntity($entity);
@@ -63,7 +65,7 @@ class Manager
     public function validateEntity($id)
     {
         $entity = clone $this->collection->getEntity($id);
-        $this->I->wantToDoSuccessfulGet("Validate entity {$this->getResourceName()} with id $id", $this->getResourceName(), $id, [], $entity);
+        $this->client->wantToDoSuccessfulGet($this->getResourceName(), $id, [], $entity);
     }
 
     /**
@@ -83,8 +85,7 @@ class Manager
 
     public function validateList()
     {
-        $this->I->wantToDoSuccessfulGet(
-            "Validate {$this->getResourceName()} list",
+        $this->client->wantToDoSuccessfulGet(
             $this->getResourceName(),
             null,
             [],
@@ -95,12 +96,33 @@ class Manager
     public function deleteEntity($key)
     {
         $id = $this->dataManager->getId($this->getResourceName(), $key);
-        $this->I->wantToDoSuccessfulDelete(
-            "Remove from {$this->getResourceName()} id $id",
+        $this->client->wantToDoSuccessfulDelete(
             $this->getResourceName(),
             $id
         );
         $this->collection->removeEntity($id);
         $this->dataManager->removeId($this->getResourceName(), $key);
+    }
+
+    public function expectToSeeWithFilter($entityKeys, array $filter)
+    {
+        $collection = Collection::create($this->getResourceName())
+            ->setFilter($filter);
+        foreach ($entityKeys as $entityKey) {
+            $collection->addEntity($this->getEntityWithKey($entityKey));
+        }
+
+        $this->client->wantToDoSuccessfulGet(
+            $this->getResourceName(),
+            null,
+            ['filter' => json_encode($collection->getFilter())],
+            $collection
+        );
+    }
+
+    public function checkEntityDoesNotExit($id)
+    {
+        $this->client->wantToDoNotFoundRequest(sprintf('/%s/%s', $this->getResourceName(), $id), 'get');
+        $this->client->wantToDoNotFoundRequest(sprintf('/%s/%s', $this->getResourceName(), $id), 'delete');
     }
 }

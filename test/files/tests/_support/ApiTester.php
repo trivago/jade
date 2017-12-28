@@ -31,6 +31,9 @@ abstract class ApiTester extends \Codeception\Actor
     /** @var Manager */
     protected $manager;
 
+    /** @var \Api\Client */
+    protected $client;
+
     /**
      * @param Scenario $scenario
      */
@@ -38,116 +41,43 @@ abstract class ApiTester extends \Codeception\Actor
     {
         $collection = Collection::create($this->getResourceName());
         $d = new MockedDataManager();
-        $this->manager = Manager::create($this, $d, $collection);
+        $this->client = \Api\Client::create($scenario);
+        $this->manager = Manager::create($this->client, $d, $collection);
         parent::__construct($scenario);
     }
 
     abstract protected function getResourceName();
-
-    public function wantToDoSuccessfulGet($message, $resourceName, $id, array $query, $result)
-    {
-        $path = $this->getPath($resourceName, $id);
-        if ($result instanceof Collection && count($result->getFilter())) {
-            $query['filter'] = json_encode($result->getFilter());
-        }
-        $this->wantToDoRequest($message, 'GET', $path, $query, [], $result, HttpCode::OK);
-    }
-
-    public function wantToDoFailGet($message, $resourceName, $id, array $query, $result)
-    {
-        $path = $this->getPath($resourceName, $id);
-        $this->wantToDoRequest($message, 'GET', $path, $query, [], $result, HttpCode::BAD_REQUEST);
-    }
-
-    public function wantToDoSuccessfulPost($message, $resourceName, array $query, array $body, $result)
-    {
-        $path = $this->getPath($resourceName, null);
-        $this->wantToDoRequest($message, 'POST', $path, $query, $body, $result, HttpCode::OK);
-    }
-
-    public function wantToDoFailPost($message, $resourceName, array $query, array $body, $result)
-    {
-        $path = $this->getPath($resourceName, null);
-        $this->wantToDoRequest($message, 'POST', $path, $query, $body, $result, HttpCode::BAD_REQUEST);
-    }
-
-    public function wantToDoSuccessfulDelete($message, $resourceName, $id)
-    {
-        $path = $this->getPath($resourceName, $id);
-        $this->wantToDoRequest($message, 'DELETE', $path, [], [], '', HttpCode::NO_CONTENT);
-    }
-
-    public function wantToDoNotFoundRequest($path, $method)
-    {
-        $this->wantTo('Call a non existing url');
-        $method = 'send'.strtoupper($method);
-        $this->$method($path);
-        $this->seeResponseCodeIs(HttpCode::NOT_FOUND);
-    }
-
-    public function wantToCheckMethodIsNotAllowed($path, $method)
-    {
-        $this->wantTo('Call a url with a method that is not allowed');
-        $method = 'send'.strtoupper($method);
-        $this->$method($path);
-        $this->seeResponseCodeIs(HttpCode::METHOD_NOT_ALLOWED);
-    }
 
     public function validateCurrentList()
     {
         $this->manager->validateList();
     }
 
+    public function create($id, $key)
+    {
+        $this->wantTo(sprintf('Create a %s with key %s', $this->getResourceName(), $key));
+        $this->manager->createEntity($id, $key);
+    }
+
+    public function delete($id)
+    {
+        $this->wantTo(sprintf('Delete a %s with id %s', $this->getResourceName(), $id));
+        $this->manager->deleteEntity($id);
+    }
+
+    public function checkEntityDoesNotExist($id)
+    {
+        $this->manager->checkEntityDoesNotExit($id);
+    }
+
     public function expectToSeeWithFilter($entityKeys, array $filter)
     {
-        $collection = Collection::create($this->getResourceName())
-            ->setFilter($filter);
-        foreach ($entityKeys as $entityKey) {
-            $collection->addEntity($this->manager->getEntityWithKey($entityKey));
-        }
-
-        $this->wantToDoSuccessfulGet(
-            "Check {$this->getResourceName()} list.",
-            $this->getResourceName(),
-            null,
-            [],
-            $collection
-        );
+        $this->wantTo("Check {$this->getResourceName()} list.");
+        $this->manager->expectToSeeWithFilter($entityKeys, $filter);
     }
 
     public function getCollection()
     {
         return $this->manager->getCollection();
-    }
-
-    private function wantToDoRequest($message, $method, $path, array $query, array $body, $result, $code)
-    {
-        $this->wantTo($message);
-        $path .= '?'.http_build_query($query);
-        $method = 'send'.strtoupper($method);
-        if ($method === 'sendGET') {
-            $this->sendGET($path);
-        } else {
-            $this->$method($path, \json_encode($body));
-        }
-        $this->seeResponseCodeIs($code);
-        if ($code !== HttpCode::NO_CONTENT) {
-            $this->seeResponseIsJson();
-            if ($result instanceof \JsonSerializable) {
-                $this->seeResponseEquals(\json_encode($result, JsonResponse::DEFAULT_ENCODING_OPTIONS));
-            } elseif (is_string($result)) {
-                $this->seeResponseContains($result);
-            }
-        }
-    }
-
-    private function getPath($resourceName, $id)
-    {
-        $path = '/'.$resourceName;
-        if ($id) {
-            $path .= '/'.$id;
-        }
-
-        return $path;
     }
 }
