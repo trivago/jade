@@ -24,7 +24,7 @@ namespace Trivago\Jade\Application\Listener;
 interface CreateListener
 {
     /**
-     * The object instance is created by not saved yet
+     * The object instance is created but not saved yet
      * @param object $entity
      * @deprecated Use beforeSave instead
      */
@@ -36,7 +36,7 @@ interface CreateListener
     public function beforeSave($entity);
 
     /**
-     * The object instance is created by and saved
+     * The object instance is created and saved
      * @param object $entity
      * @deprecated Use afterSave instead
      */

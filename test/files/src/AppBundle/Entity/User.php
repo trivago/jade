@@ -1,95 +1,68 @@
 <?php
 
-/*
- * Copyright (c) 2017 trivago
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *
- * @author Moein Akbarof <moein.akbarof@trivago.com>
- * @date 2017-09-10
- */
-
 namespace AppBundle\Entity;
 
 use AppBundle\Value\Email;
+use Symfony\Component\Security\Core\User\UserInterface;
 use Doctrine\ORM\Mapping as ORM;
+use Webmozart\Assert\Assert;
 
 /**
  * @ORM\Entity
  */
-class User
+class User implements UserInterface
 {
     /**
+     * @var int
      * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
      * @ORM\Column(type="integer")
+     * @ORM\GeneratedValue(strategy="AUTO")
      */
     private $id;
 
     /**
-     * @ORM\Column(type="string", nullable=false)
+     * @var string
+     * @ORM\Column(type="string", length=50)
      */
     private $name;
 
     /**
-     * @ORM\ManyToMany(targetEntity="User")
-     * @var User[]
+     * @var bool
+     * @ORM\Column(type="boolean")
      */
-    private $friends = [];
+    private $isAdmin;
 
     /**
-     * Just a field that will be excluded in response
-     * @ORM\Column(type="string")
-     * @var string
-     */
-    private $hash;
-
-    /**
-     * @ORM\ManyToOne(targetEntity="User")
-     * @var User
-     */
-    private $bestFriend;
-
-    /**
-     * sqlite doesn't accept not null without default value.
-     * @ORM\Column(type="string", nullable=false, options={"default"=""})
+     * @ORM\Column(type="string", length=100, unique=true)
      */
     private $email;
 
     /**
-     * @ORM\Column(type="boolean", options={"default"=false})
+     * @var Task[]
+     * @ORM\OneToMany(targetEntity="Task", mappedBy="owner")
      */
-    private $isAdmin = false;
+    private $ownedTasks;
 
     /**
-     * @param string $name
-     * @param Email $email
-     * @param boolean $isAdmin
-     * @return User
+     * @var Task[]
+     * @ORM\OneToMany(targetEntity="Task", mappedBy="owner")
      */
-    public static function create($name, Email $email, $isAdmin = false)
-    {
-        $user = new self();
-        $user->setName($name);
-        $user->email = $email;
-        $user->isAdmin = $isAdmin;
-        $user->hash = uniqid();
+    private $assignedTasks;
 
-        return $user;
+    private function __construct(Email $email, $name, $isAdmin)
+    {
+        $this->email = $email->getValue();
+        $this->isAdmin = $isAdmin;
+        $this->setName($name);
+    }
+
+    public static function create(Email $email, $name, $isAdmin)
+    {
+        return new User($email, $name, $isAdmin);
     }
 
     /**
-     * @return string
+     * @return int
      */
     public function getId()
     {
@@ -105,14 +78,6 @@ class User
     }
 
     /**
-     * @param string $name
-     */
-    public function setName($name)
-    {
-        $this->name = $name;
-    }
-
-    /**
      * @return string
      */
     public function getEmail()
@@ -121,11 +86,19 @@ class User
     }
 
     /**
-     * @return User[]
+     * @return Task[]
      */
-    public function getFriends()
+    public function getOwnedTasks()
     {
-        return $this->friends;
+        return $this->ownedTasks;
+    }
+
+    /**
+     * @return Task[]
+     */
+    public function getAssignedTasks()
+    {
+        return $this->assignedTasks;
     }
 
     public function isAdmin()
@@ -134,31 +107,57 @@ class User
     }
 
     /**
-     * @param array $friends
+     * @param string $name
      */
-    public function setFriends($friends)
+    public function setName($name)
     {
-        $this->friends = $friends;
+        Assert::minLength($name,3, 'Name must be at least 3 characters long');
+        Assert::maxLength($name, 50, 'Name must not be more than 50 characters long');
+        $this->name = $name;
     }
 
     /**
-     * @param User|null $bestFriend
+     * @inheritdoc
      */
-    public function setBestFriend(User $bestFriend = null)
+    public function getRoles()
     {
-        $this->bestFriend = $bestFriend;
+        $roles = ['ROLE_USER'];
+        if ($this->email === 'system@system.com') {
+            $roles[] = 'ROLE_ADMIN';
+        }
+
+        return $roles;
     }
 
     /**
-     * @return User
+     * @inheritdoc
      */
-    public function getBestFriend()
+    public function getPassword()
     {
-        return $this->bestFriend;
+        return null;
     }
 
-    public function getHash()
+    /**
+     * @inheritdoc
+     */
+    public function getSalt()
     {
-        return $this->hash;
+        return null;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getUsername()
+    {
+        return $this->email;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function eraseCredentials()
+    {
+
     }
 }

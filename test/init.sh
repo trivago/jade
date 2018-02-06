@@ -36,6 +36,7 @@ echo "Installing the jade library"
 curl -LsS https://getcomposer.org/composer.phar -o ./composer
 chmod a+x ./composer
 ./composer require trivago/jade
+./composer require webmozart/assert
 ./composer require "codeception/codeception" --dev
 echo "Symlinking jade to the parent repository."
 rm -rf vendor/trivago/jade

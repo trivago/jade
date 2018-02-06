@@ -46,6 +46,7 @@ services:
             - "@trivago_jade.resource_repository_provider"
 
     trivago_jade.generic_resource_manager:
+        public: true
         class: Trivago\Jade\Domain\ResourceManager\GenericResourceManager
         arguments:
             - "@trivago_jade.field_resolver"
@@ -63,6 +64,7 @@ services:
             - "%json_api_debug%"
 
     trivago_jade.resource_mapper.runtime_mapper:
+        public: true
         class: Trivago\Jade\Application\JsonApi\Mapping\RuntimeResourceMapper
         arguments:
             - "@trivago_jade.resource_config_provider"
@@ -70,4 +72,5 @@ services:
             - "@security.token_storage"
 
     trivago_jade.resource_mapper:
+        public: true
         alias: trivago_jade.resource_mapper.runtime_mapper

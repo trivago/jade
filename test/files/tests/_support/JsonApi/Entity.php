@@ -11,7 +11,9 @@ class Entity implements \JsonSerializable
     /** @var array */
     private $attributes = [];
     /** @var Pointer[] */
-    private $relationships = [];
+    private $singleRelationships = [];
+    /** @var Pointer[][] */
+    private $collectionRelationships = [];
     /** @var bool */
     private $isInCollection = false;
 
@@ -29,6 +31,23 @@ class Entity implements \JsonSerializable
     public function isId($id)
     {
         return $this->id === (string) $id;
+    }
+
+    /**
+     * @return string
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * @param Entity $entity
+     * @return bool
+     */
+    public function isSame(Entity $entity)
+    {
+        return $this->id === $entity->id;
     }
 
     /**
@@ -61,17 +80,29 @@ class Entity implements \JsonSerializable
         return $this;
     }
 
-    public function setRelationship($name, Pointer $pointer)
+    public function setSingleRelationship($name, Pointer $pointer)
     {
-        $this->relationships[$name] = $pointer;
+        $this->singleRelationships[$name] = $pointer;
 
         return $this;
     }
 
-    public function setRelationships(array $relationships)
+    public function setSingleRelationships(array $singleRelationships)
     {
-        foreach ($relationships as $name => $pointer) {
-            $this->setRelationship($name, $pointer);
+        foreach ($singleRelationships as $name => $pointer) {
+            $this->setSingleRelationship($name, $pointer);
+        }
+    }
+
+    public function setCollectionRelationship($name, $pointers)
+    {
+        $this->collectionRelationships[$name] = $pointers;
+    }
+
+    public function setCollectionRelationships(array $collectionRelationships)
+    {
+        foreach ($collectionRelationships as $name => $pointers) {
+            $this->setCollectionRelationship($name, $pointers);
         }
     }
 
@@ -89,8 +120,14 @@ class Entity implements \JsonSerializable
             $data['attributes'] = $this->attributes;
         }
 
-        if ($this->relationships) {
-            $data['relationships'] = $this->relationships;
+        $relationships = array_merge($this->collectionRelationships, $this->singleRelationships);
+
+        if ($relationships) {
+            foreach ($relationships as $name => $relationship) {
+                $data['relationships'][$name] = [
+                    'data' => $relationship
+                ];
+            }
         }
 
         $data['links'] = ['self' => LinkBuilder::selfEntity($this->type, $this->id)];

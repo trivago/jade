@@ -57,6 +57,19 @@ class Collection implements \JsonSerializable
         return $this;
     }
 
+    public function replaceEntity(Entity $entity)
+    {
+        foreach ($this->entities as $key => $collectionEntity) {
+            if ($collectionEntity->isSame($entity)) {
+                $entity->setInCollection();
+                $this->entities[$key] = $entity;
+                return;
+            }
+        }
+
+        throw new \InvalidArgumentException('No entity found with id '.$entity->getId());
+    }
+
     public function removeEntity($id)
     {
         foreach ($this->entities as $key => $entity) {

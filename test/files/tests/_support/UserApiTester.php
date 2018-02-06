@@ -1,7 +1,5 @@
 <?php
 
-use Codeception\Scenario;
-
 class UserApiTester extends ApiTester
 {
     protected function getResourceName()

@@ -34,6 +34,9 @@ abstract class ApiTester extends \Codeception\Actor
     /** @var \Api\Client */
     protected $client;
 
+    /** @var array */
+    protected $users = [];
+
     /**
      * @param Scenario $scenario
      */
@@ -53,10 +56,21 @@ abstract class ApiTester extends \Codeception\Actor
         $this->manager->validateList();
     }
 
+    public function actAs($email)
+    {
+        $this->client->setAuthEmail($email);
+    }
+
     public function create($id, $key)
     {
         $this->wantTo(sprintf('Create a %s with key %s', $this->getResourceName(), $key));
         $this->manager->createEntity($id, $key);
+    }
+
+    public function update($id, $attributes, $relationships = [])
+    {
+        $this->wantTo(sprintf('Modify %s with id %s', $this->getResourceName(), $id));
+        $this->manager->updateEntity($id, $attributes, $relationships);
     }
 
     public function delete($id)

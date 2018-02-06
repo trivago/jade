@@ -1,8 +1,8 @@
 <?php
 
-use JsonApi\RequestBuilder;
 /** @var \Codeception\Scenario $scenario */
 $I = new UserApiTester($scenario);
+$I->actAs('system@system.com');
 
 // Validate empty list
 $I->validateCurrentList();

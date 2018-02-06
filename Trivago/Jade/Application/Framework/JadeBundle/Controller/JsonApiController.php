@@ -296,7 +296,7 @@ class JsonApiController extends Controller
         $this->checkAccess($resourceName, ResourceConfig::ACTION_CREATE);
 
         $request = $this->requestFactory->createCreateRequest($httpRequest, $resourceName);
-        $this->listenerManager->onCreateRequest($request, $resourceName);
+        $request = $this->listenerManager->onCreateRequest($request, $resourceName);
 
         $resourceManagerServiceId = $this->resourceConfigProvider->getResourceConfig($resourceName)->getManagerServiceId();
         /** @var ResourceManager $manager */
@@ -343,7 +343,7 @@ class JsonApiController extends Controller
         }
 
         $request = $this->requestFactory->createUpdateRequest($httpRequest, $resourceName, $id);
-        $this->listenerManager->onUpdateRequest($request, $resourceName);
+        $request = $this->listenerManager->onUpdateRequest($request, $resourceName);
 
         $resourceManagerServiceId = $this->resourceConfigProvider->getResourceConfig($resourceName)->getManagerServiceId();
         /** @var ResourceManager $manager */
@@ -485,7 +485,12 @@ class JsonApiController extends Controller
         if ($exception instanceof UniqueConstraintViolationException) {
             preg_match("/1062 Duplicate entry '(.+?)' for key/", $exception->getMessage(), $matches);
 
-            $errors = [new Error('data', null, null, 'model_unique', sprintf('Value %s already exists.', $matches[1]))];
+            if (isset($matches[1])) {
+                $message = sprintf('Value %s already exists.', $matches[1]);
+            } else {
+                $message = 'Duplicate entry';
+            }
+            $errors = [new Error('data', null, null, 'model_unique', $message)];
         }  elseif ($exception instanceof ForeignKeyConstraintViolationException) {
             $errors = [new Error('data', null, null, 'model_integrity', sprintf('There is another resource using this resource.'))];
         }  elseif ($exception instanceof InvalidModelSet) {

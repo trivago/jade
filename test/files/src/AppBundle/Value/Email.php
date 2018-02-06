@@ -10,11 +10,14 @@ class Email
     private $value;
 
     /**
-     * @param string $value
+     * @param string $email
      */
-    public function __construct($value)
+    public function __construct($email)
     {
-        $this->value = $value;
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            throw new \InvalidArgumentException('Invalid email provided');
+        }
+        $this->value = $email;
     }
 
     /**
@@ -23,13 +26,5 @@ class Email
     public function getValue()
     {
         return $this->value;
-    }
-
-    /**
-     * @return string
-     */
-    public function __toString()
-    {
-        return $this->getValue();
     }
 }

@@ -1,31 +1,50 @@
 users:
     moein:
-        static_properties:
+        writable_attributes:
             name: Moein
             email: moein@test.com
             isAdmin: true
     miguel:
-        static_properties:
+        writable_attributes:
             name: Miguel
             email: miguel@test.com
             isAdmin: true
     albert:
-        static_properties:
+        writable_attributes:
             name: Albert
             email: albert@test.com
             isAdmin: true
     jose:
-        static_properties:
+        writable_attributes:
             name: Jose
             email: jose@test.com
             isAdmin: false
     martin:
-        static_properties:
+        writable_attributes:
             name: Martin
             email: martin@test.com
             isAdmin: false
     javier:
-        static_properties:
+        writable_attributes:
             name: Javier
             email: javier@test.com
             isAdmin: false
+
+tasks:
+    task1:
+        writable_attributes:
+            name: "My task 1"
+            description: ~
+        readonly_attributes:
+            status: 1
+        writable_relationships:
+            assignee: ['users', 1]
+
+    task2:
+        writable_attributes:
+            name: "My task 2"
+            description: ~
+        readonly_attributes:
+            status: 1
+        writable_relationships:
+            assignee: ['users', 2]

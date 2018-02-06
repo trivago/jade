@@ -42,4 +42,13 @@ class MockedDataManager
 
         return $this->data[$resourceName][$key];
     }
+
+    public function getAll($resourceName)
+    {
+        if (!isset($this->data[$resourceName])) {
+            throw new \LogicException('No resource called '.$resourceName);
+        }
+
+        return $this->data[$resourceName];
+    }
 }
