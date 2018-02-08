@@ -48,8 +48,7 @@ trivago_jade:
         -
             name: people
             entity_class: AppBundle\Entity\Person
-            allow_create: true
-            allow_update: true
+            allowed_actions: [create, update]
             # In this example the privatePhone attribute is exposed if (the user has ROLE_ADMIN and $resource->isNotDeleted($user) returns true) OR $resource->isSame($user) returns true
             # $resource is the object to be serialized and $user is the authenticated user calling the api. If no user is authenticated the field is not shown at all
             attributes_permissions:
@@ -70,11 +69,11 @@ trivago_jade:
         -
             name: companies
             entity_class: AppBundle\Entity\Company
-            allow_create: true
+            allowed_actions: [create]
             attributes_permissions:
                 name:
                     - [] # Since there is no rule on this attribute but it appears here only anonymous users can't see this attribute
-            allow_update: true
+            allowed_actions: [update]
             parent: assets
         -
             name: assets
