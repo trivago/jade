@@ -102,7 +102,7 @@ class RuntimeResourceMapper implements ResourceMapper
             }
 
             $ucPropertyName = ucfirst($propertyName);
-            $methods = ['get'.$ucPropertyName, 'has'.$ucPropertyName, $propertyName];
+            $methods = ['get'.$ucPropertyName, 'has'.$ucPropertyName, 'is'.$ucPropertyName, $propertyName];
             foreach ($methods as $method) {
                 if ($reflection->hasMethod($method)) {
                     $mapping->addProperty(new StaticProperty($propertyName, $method));
