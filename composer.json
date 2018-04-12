@@ -14,8 +14,8 @@
     "require": {
         "neomerx/json-api": "^1.0",
         "doctrine/orm": "^2.5",
-        "symfony/symfony": "^3.0",
-        "doctrine/doctrine-bundle": "^1.6"
+        "doctrine/doctrine-bundle": "^1.6",
+        "symfony/security": "^3.0|^4.0"
     },
     "authors": [
         {
