@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright (c) 2017 trivago
+ * Copyright (c) 2017-present trivago GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,9 +14,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
- * @author Moein Akbarof <moein.akbarof@trivago.com>
- * @date 2017-09-10
  */
 
 namespace Trivago\Jade\Application\Listener;
@@ -31,36 +28,42 @@ interface RequestListener
 {
     /**
      * @param EntityRequest $request
+     *
      * @return EntityRequest
      */
     public function onGetEntityRequest(EntityRequest $request);
 
     /**
      * @param CollectionRequest $request
+     *
      * @return CollectionRequest
      */
     public function onGetCollectionRequest(CollectionRequest $request);
 
     /**
      * @param CreateRequest $request
+     *
      * @return CreateRequest
      */
     public function onCreateRequest(CreateRequest $request);
 
     /**
      * @param UpdateRequest $request
+     *
      * @return UpdateRequest
     */
     public function onUpdateRequest(UpdateRequest $request);
 
     /**
      * @param DeleteRequest $request
+     *
      * @return DeleteRequest
     */
     public function onDeleteRequest(DeleteRequest $request);
 
     /**
      * @param string $resourceName
+     *
      * @return bool
      */
     public function supports($resourceName);

@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright (c) 2017 trivago
+ * Copyright (c) 2017-present trivago GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,9 +14,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
- * @author Moein Akbarof <moein.akbarof@trivago.com>
- * @date 2017-09-10
  */
 
 namespace Trivago\Jade\Tests\Domain\ResourceManager;
@@ -31,9 +28,14 @@ use Trivago\Jade\Tests\BaseTest;
 
 class GenericResourceManagerTest extends BaseTest
 {
-    /** @var FieldResolver */
+    /**
+     * @var FieldResolver
+     */
     protected $fieldResolverProphecy;
 
+    /**
+     * @throws \ReflectionException
+     */
     public function testCreateValid()
     {
         $toOneRelationship = new ToOneRelationship('test', 'FakeClass', 1);
@@ -59,6 +61,9 @@ class GenericResourceManagerTest extends BaseTest
         self::assertFalse($entity->isUpdatedCalled());
     }
 
+    /**
+     * @throws \ReflectionException
+     */
     public function testCreateNotExisting()
     {
         $this->expectException(\LogicException::class);
@@ -75,6 +80,9 @@ class GenericResourceManagerTest extends BaseTest
         $genericResourceManager->create($attributes, $relationships, TestEntity::class);
     }
 
+    /**
+     * @throws \ReflectionException
+     */
     public function testCreateInvalidReturnObject()
     {
         $this->expectException(\LogicException::class);

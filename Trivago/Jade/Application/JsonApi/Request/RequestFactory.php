@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright (c) 2017 trivago
+ * Copyright (c) 2017-present trivago GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,9 +14,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
- * @author Moein Akbarof <moein.akbarof@trivago.com>
- * @date 2017-09-10
  */
 
 namespace Trivago\Jade\Application\JsonApi\Request;
@@ -30,6 +27,7 @@ use Trivago\Jade\Application\JsonApi\Schema\RequestValidator;
 use Trivago\Jade\Domain\Resource\CompositeFilter;
 use Trivago\Jade\Domain\Resource\CompositeFilterTypes;
 use Trivago\Jade\Domain\Resource\Constraint;
+use Trivago\Jade\Domain\Resource\Exception\InvalidPath;
 use Trivago\Jade\Domain\Resource\ExpressionFilter;
 use Trivago\Jade\Domain\Resource\Path;
 use Trivago\Jade\Domain\Resource\Sort;
@@ -64,22 +62,22 @@ class RequestFactory
     private $defaultPerPage;
 
     /**
-     * @var boolean
+     * @var bool
      */
     private $strictFilteringAndSorting;
 
     /**
-     * @var boolean
+     * @var bool
      */
     private $jsonApiDebug;
 
     /**
-     * @param RequestValidator $requestValidator
+     * @param RequestValidator       $requestValidator
      * @param ResourceConfigProvider $resourceConfigProvider
-     * @param int $maxPerPage
-     * @param int $defaultPerPage
-     * @param boolean $strictFilteringAndSorting
-     * @param boolean $jsonApiDebug
+     * @param int                    $maxPerPage
+     * @param int                    $defaultPerPage
+     * @param bool                   $strictFilteringAndSorting
+     * @param bool                   $jsonApiDebug
      */
     public function __construct(
         RequestValidator $requestValidator,
@@ -88,8 +86,7 @@ class RequestFactory
         $defaultPerPage,
         $strictFilteringAndSorting,
         $jsonApiDebug
-    )
-    {
+    ) {
         $this->requestValidator = $requestValidator;
         $this->resourceConfigProvider = $resourceConfigProvider;
         $this->maxPerPage = $maxPerPage;
@@ -100,8 +97,15 @@ class RequestFactory
 
     /**
      * @param ParameterBag $query
-     * @param string $resourceName
+     * @param string       $resourceName
+     *
      * @return CollectionRequest
+     *
+     * @throws \LogicException
+     * @throws InvalidPath
+     * @throws InvalidRequest
+     * @throws \InvalidArgumentException
+     * @throws \ReflectionException
      */
     public function createCollectionRequest(ParameterBag $query, $resourceName)
     {
@@ -137,9 +141,15 @@ class RequestFactory
 
     /**
      * @param ParameterBag $query
-     * @param string $resourceName
-     * @param mixed $resourceId
+     * @param string       $resourceName
+     * @param mixed        $resourceId
+     *
      * @return EntityRequest
+     * @throws InvalidRequest
+     * @throws \LogicException
+     * @throws \InvalidArgumentException
+     * @throws InvalidPath
+     * @throws \ReflectionException
      */
     public function createEntityRequest(ParameterBag $query, $resourceName, $resourceId)
     {
@@ -151,7 +161,8 @@ class RequestFactory
 
     /**
      * @param string $resourceName
-     * @param mixed $resourceId
+     * @param mixed  $resourceId
+     *
      * @return DeleteRequest
      */
     public function createDeleteRequest($resourceName, $resourceId)
@@ -161,9 +172,14 @@ class RequestFactory
 
     /**
      * @param Request $request
-     * @param string $resourceName
-     * @param mixed $resourceId
+     * @param string  $resourceName
+     * @param mixed   $resourceId
+     *
      * @return UpdateRequest
+     *
+     * @throws \LogicException
+     * @throws \InvalidArgumentException
+     * @throws InvalidRequest
      */
     public function createUpdateRequest(Request $request, $resourceName, $resourceId)
     {
@@ -190,8 +206,13 @@ class RequestFactory
 
     /**
      * @param Request $request
-     * @param string $resourceName
+     * @param string  $resourceName
+     *
      * @return CreateRequest
+     *
+     * @throws InvalidRequest
+     * @throws \InvalidArgumentException
+     * @throws \LogicException
      */
     public function createCreateRequest(Request $request, $resourceName)
     {
@@ -211,6 +232,9 @@ class RequestFactory
 
     /**
      * @param Request $request
+     *
+     * @throws \LogicException
+     * @throws InvalidRequest
      */
     private function prepareRequest(Request $request)
     {
@@ -227,8 +251,10 @@ class RequestFactory
 
     /**
      * @param string $resourceName
-     * @param array $data
+     * @param array  $data
+     *
      * @return ResourceAttributeBag
+     * @throws \InvalidArgumentException
      */
     private function createAttributeBag($resourceName, $data)
     {
@@ -249,8 +275,13 @@ class RequestFactory
 
     /**
      * @param ResourceConfig $resourceConfig
-     * @param string $rawSorts
+     * @param string         $rawSorts
+     *
      * @return SortCollection
+     *
+     * @throws InvalidRequest
+     * @throws InvalidPath
+     * @throws \InvalidArgumentException
      */
     private function parseSorts(ResourceConfig $resourceConfig, $rawSorts)
     {
@@ -275,10 +306,14 @@ class RequestFactory
     }
 
     /**
-     * @param ResourceConfig $resourceConfig
+     * @param ResourceConfig  $resourceConfig
      * @param CompositeFilter $compositeFilter
-     * @param array $rawFilters
-     * @param array $errorKey
+     * @param array           $rawFilters
+     * @param array           $errorKey
+     *
+     * @throws InvalidRequest
+     * @throws InvalidPath
+     * @throws \InvalidArgumentException
      */
     private function parseFilters(ResourceConfig $resourceConfig, CompositeFilter $compositeFilter, $rawFilters, $errorKey)
     {
@@ -286,7 +321,7 @@ class RequestFactory
             $currentErrorKey = $errorKey;
             $currentErrorKey[] = $key;
 
-            if (in_array($rawFilter['type'], [CompositeFilterTypes::AND_EXPRESSION, CompositeFilterTypes::OR_EXPRESSION])) {
+            if (in_array($rawFilter['type'], [CompositeFilterTypes::AND_EXPRESSION, CompositeFilterTypes::OR_EXPRESSION], true)) {
                 $this->validateCompositeFilter(implode('.', $currentErrorKey), $rawFilter);
                 $filter = new CompositeFilter($rawFilter['type'], []);
                 $compositeFilter->addFilter($filter);
@@ -298,20 +333,25 @@ class RequestFactory
                 // Validating the "path" is not under "excluded_attributes" config section
                 $this->validateExcludedPaths($resourceConfig, 'data.filter', $rawFilter['path']);
 
-                $compositeFilter->addFilter(new ExpressionFilter(
-                    $resourceConfig->getRealPath($rawFilter['path']),
-                    $rawFilter['type'],
-                    $rawFilter['value']
-                ));
+                $compositeFilter->addFilter(
+                    new ExpressionFilter(
+                        $resourceConfig->getRealPath($rawFilter['path']),
+                        $rawFilter['type'],
+                        $rawFilter['value']
+                    )
+                );
             }
         }
     }
 
     /**
-     * Validating the "path" is not under "excluded_attributes" config section
+     * Validating the "path" is not under "excluded_attributes" config section.
+     *
      * @param ResourceConfig $resourceConfig
-     * @param string $key
-     * @param string $path
+     * @param string         $key
+     * @param string         $path
+     *
+     * @throws InvalidRequest
      */
     private function validateExcludedPaths(ResourceConfig $resourceConfig, $key, $path)
     {
@@ -326,15 +366,17 @@ class RequestFactory
                         $path
                     )
                 );
-            } else {
-                throw InvalidRequest::createWithMessage($key, 'invalid_path', 'There is no path called '.$path);
             }
+
+            throw InvalidRequest::createWithMessage($key, 'invalid_path', 'There is no path called '.$path);
         }
     }
 
     /**
-     * @param $errorKey
-     * @param array $rawFilter
+     * @param string $errorKey
+     * @param array  $rawFilter
+     *
+     * @throws InvalidRequest
      */
     private function validateExpressionFilter($errorKey, $rawFilter)
     {
@@ -347,8 +389,10 @@ class RequestFactory
     }
 
     /**
-     * @param $errorKey
-     * @param array $rawFilter
+     * @param string $errorKey
+     * @param array  $rawFilter
+     *
+     * @throws InvalidRequest
      */
     private function validateCompositeFilter($errorKey, $rawFilter)
     {
@@ -363,14 +407,16 @@ class RequestFactory
 
     /**
      * @param string $errorKey
-     * @param array $array
-     * @param array $keys
+     * @param array  $array
+     * @param array  $keys
+     *
+     * @throws InvalidRequest
      */
     private function validateKeys($errorKey, $array, $keys)
     {
         foreach ($keys as $key) {
             if (!is_array($array) ) {
-                throw InvalidRequest::createWithMessage('data.'.$errorKey, 'invalid_format', sprintf('Expected array but received ', gettype($array)));
+                throw InvalidRequest::createWithMessage('data.'.$errorKey, 'invalid_format', sprintf('Expected array but received %s', gettype($array)));
             }
             if (!array_key_exists($key, $array)) {
                 throw InvalidRequest::createWithMessage('data.'.$errorKey, 'invalid_format', sprintf('Missing key %s in %s', $key, $errorKey));
@@ -379,10 +425,15 @@ class RequestFactory
     }
 
     /**
-     * @param array $data
+     * @param array     $data
      * @param \stdClass $dataAsObject
-     * @param bool $acceptNull
+     * @param bool      $acceptNull
+     *
      * @return ResourceRelationshipBag
+     *
+     * @throws \LogicException
+     * @throws \InvalidArgumentException
+     * @throws InvalidRequest
      */
     private function createRelationshipBag($data, $dataAsObject, $acceptNull)
     {
@@ -439,9 +490,12 @@ class RequestFactory
     }
 
     /**
-     * @param array $relationshipData
+     * @param array  $relationshipData
      * @param string $relationshipName
      * @param string $relationshipPath
+     *
+     * @throws \InvalidArgumentException
+     * @throws InvalidRequest
      */
     private function validateRelationshipType($relationshipData, $relationshipName, $relationshipPath)
     {
@@ -460,7 +514,14 @@ class RequestFactory
     /**
      * @param string $resourceName
      * @param string $includeString
+     *
      * @return array
+     *
+     * @throws InvalidRequest
+     * @throws \LogicException
+     * @throws \InvalidArgumentException
+     * @throws InvalidPath
+     * @throws \ReflectionException
      */
     private function getRelationships($resourceName, $includeString)
     {
@@ -478,7 +539,12 @@ class RequestFactory
      * @param string $resourceName
      * @param string $key
      * @param Path[] $paths
-     * @param bool $canBeRelationship
+     * @param bool   $canBeRelationship
+     *
+     * @throws \LogicException
+     * @throws \InvalidArgumentException
+     * @throws InvalidRequest
+     * @throws \ReflectionException
      */
     private function validatePaths($resourceName, $key, array $paths, $canBeRelationship)
     {
@@ -504,7 +570,9 @@ class RequestFactory
 
     /**
      * @param ExpressionFilter[] $filters
-     * @param Path[] $relationships
+     * @param Path[]             $relationships
+     *
+     * @throws InvalidPath
      */
     private function validateFiltersOnRelationship(array $filters, array $relationships)
     {
