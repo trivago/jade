@@ -24,17 +24,14 @@ if [ "${HAS_SQLITE}" -eq "0" ]; then
    exit;
 fi
 
-echo "Downloading symfony binary"
-curl -LsS https://symfony.com/installer -o ./symfony
-chmod a+x ./symfony
-echo "Creating a new symfony project"
-rm -rf ${NAME}
-./symfony new ${NAME} 3.4
-rm ./symfony
-cd ${NAME}
-echo "Installing the jade library"
+echo "Downloading composer binary"
 curl -LsS https://getcomposer.org/composer.phar -o ./composer
 chmod a+x ./composer
+echo "Creating a new symfony project"
+rm -rf ${NAME}
+./composer create-project symfony web-skeleton
+cd ${NAME}
+echo "Installing the jade library"
 ./composer require trivago/jade
 ./composer require webmozart/assert
 ./composer require "codeception/codeception" --dev

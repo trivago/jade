@@ -1,6 +1,15 @@
 Jade(Json Api Doctrine Exposer)
 =============
 
+Versioning
+----------
+If you are reading this section it means you are already on 4.x(master and 4.x branch).
+
+All the new features will only be developed on 4.x and only bug fixing will be done on 1.x
+
+From now on we will use the major version of symfony which means no braking change until we upgrade the library to a 
+major version of symfony
+
 What is it?
 -------------
 Jade is a library created in an effort to create a simple way to create Json API server using doctrine entities.
