@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright (c) 2017 trivago
+ * Copyright (c) 2017-present trivago GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,9 +14,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
- * @author Moein Akbarof <moein.akbarof@trivago.com>
- * @date 2017-09-10
  */
 
 namespace Trivago\Jade\Tests\Domain\ResourceManager;
@@ -36,12 +33,19 @@ class FieldResolverTest extends BaseTest
 {
     const RELATIONSHIP_CLASS = 'RelClass';
 
-    /** @var ResourceRepositoryProvider */
+    /**
+     * @var ResourceRepositoryProvider
+     */
     protected $resourceRepositoryProviderProphecy;
 
-    /** @var ResourceRepository */
+    /**
+     * @var ResourceRepository
+     */
     protected $resourceRepositoryProphecy;
 
+    /**
+     * @return array
+     */
     public function provider()
     {
         return [
@@ -81,14 +85,15 @@ class FieldResolverTest extends BaseTest
 
     /**
      * @dataProvider provider
+     *
      * @param string $method
-     * @param array $rawRelationships
-     * @param array $remainingRelationshipNames
-     * @param array $attributes
-     * @param array $remainingAttributeNames
-     * @param array $parameters
+     * @param array  $rawRelationships
+     * @param array  $remainingRelationshipNames
+     * @param array  $attributes
+     * @param array  $remainingAttributeNames
+     * @param array  $parameters
      * @param string $exceptionClass
-     * @param bool $missingEntities
+     * @param bool   $missingEntities
      */
     public function testValidCases(
         $method,
@@ -99,8 +104,7 @@ class FieldResolverTest extends BaseTest
         array $parameters,
         $exceptionClass = null,
         $missingEntities = false
-        )
-    {
+    ) {
         if ($exceptionClass) {
             $this->expectException($exceptionClass);
         }

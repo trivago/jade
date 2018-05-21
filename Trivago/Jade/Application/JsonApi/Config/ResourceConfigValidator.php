@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright (c) 2017 trivago
+ * Copyright (c) 2017-present trivago GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,9 +14,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
- * @author Moein Akbarof <moein.akbarof@trivago.com>
- * @date 2017-09-10
  */
 
 namespace Trivago\Jade\Application\JsonApi\Config;
@@ -25,8 +22,8 @@ class ResourceConfigValidator
 {
     /**
      * @param string $resourceName
-     * @param array $processedResourceConfig
-     * @param array $processedConfigs
+     * @param array  $processedResourceConfig
+     * @param array  $processedConfigs
      */
     public function validate($resourceName, array $processedResourceConfig, array $processedConfigs)
     {
@@ -49,7 +46,7 @@ class ResourceConfigValidator
     /**
      * @param string $resourceName
      * @param string $entityClass
-     * @param array $allowedActions
+     * @param array  $allowedActions
      * @param string $createMethod
      */
     public function validateEntityClass($resourceName, $entityClass, array $allowedActions, $createMethod)
@@ -60,16 +57,15 @@ class ResourceConfigValidator
             );
         }
         $reflectionClass = new \ReflectionClass($entityClass);
-        if (in_array(ResourceConfig::ACTION_CREATE, $allowedActions) && !$reflectionClass->hasMethod($createMethod)) {
+        if (in_array(ResourceConfig::ACTION_CREATE, $allowedActions, true) && !$reflectionClass->hasMethod($createMethod)) {
             throw new \InvalidArgumentException(sprintf('Missing static method %s on %s', $createMethod, $entityClass));
         }
     }
 
     /**
-     *
      * @param string $resourceName
-     * @param array $relationships
-     * @param array $processedConfigs
+     * @param array  $relationships
+     * @param array  $processedConfigs
      */
     public function validateRelationships($resourceName, array $relationships, array $processedConfigs)
     {
@@ -84,7 +80,7 @@ class ResourceConfigValidator
 
     /**
      * @param string $resourceName
-     * @param array $valueObjects
+     * @param array  $valueObjects
      */
     public function validateValueObjects($resourceName, array $valueObjects)
     {
@@ -105,9 +101,9 @@ class ResourceConfigValidator
     }
 
     /**
-     * @param $resourceName
-     * @param $entityClass
-     * @param array $virtualProperty
+     * @param string $resourceName
+     * @param string $entityClass
+     * @param array  $virtualProperty
      */
     public function validateVirtualProperties($resourceName, $entityClass, array $virtualProperty)
     {

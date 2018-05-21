@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright (c) 2017 trivago
+ * Copyright (c) 2017-present trivago GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,9 +14,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
- * @author Moein Akbarof <moein.akbarof@trivago.com>
- * @date 2017-09-10
  */
 
 namespace Trivago\Jade\Domain\Resource;
@@ -29,7 +26,7 @@ class CompositeFilter extends Filter
     private $filters = [];
 
     /**
-     * @param string $type
+     * @param string   $type
      * @param Filter[] $expressions
      */
     public function __construct($type, array $expressions)
@@ -60,7 +57,7 @@ class CompositeFilter extends Filter
     }
 
     /**
-     * @param int $key
+     * @param int    $key
      * @param Filter $filter
      */
     public function replaceFilter($key, Filter $filter)
@@ -77,7 +74,7 @@ class CompositeFilter extends Filter
         foreach ($this->getFilters() as $filter) {
             if ($filter instanceof ExpressionFilter) {
                 $paths[] = $filter->getPath();
-            } elseif ($filter instanceof CompositeFilter) {
+            } elseif ($filter instanceof self) {
                 $paths = array_merge($paths, $filter->getAllPaths());
             } else {
                 throw new \LogicException('Expected ExpressionFilter or CompositeFilter. Received '.get_class($filter));

@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright (c) 2017 trivago
+ * Copyright (c) 2017-present trivago GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,9 +14,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
- * @author Moein Akbarof <moein.akbarof@trivago.com>
- * @date 2017-09-10
  */
 
 namespace Trivago\Jade\Application\Framework\JadeBundle\ResourceRepository;
@@ -48,21 +45,25 @@ class ResourceRepositoryProvider implements ResourceRepositoryProviderInterface
     private $resourceConfigs = [];
 
     /**
-     * @param ContainerInterface $container
-     * @param Registry $doctrine
+     * @param ContainerInterface     $container
+     * @param Registry               $doctrine
      * @param ResourceConfigProvider $resourceConfigProvider
      */
-    public function __construct(ContainerInterface $container, Registry $doctrine, ResourceConfigProvider $resourceConfigProvider)
-    {
+    public function __construct(
+        ContainerInterface $container,
+        Registry $doctrine,
+        ResourceConfigProvider $resourceConfigProvider
+    ) {
         $this->container = $container;
         $this->doctrine = $doctrine;
+
         foreach ($resourceConfigProvider->getResourceConfigs() as $resourceConfig) {
             $this->resourceConfigs[$resourceConfig->getEntityClass()] = $resourceConfig;
         }
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getRepository($entityClass)
     {
@@ -77,11 +78,11 @@ class ResourceRepositoryProvider implements ResourceRepositoryProviderInterface
                 throw new \LogicException('If you define your own repository it has to implements '.ResourceRepository::class);
             }
             return $repository;
-        } else {
-            /** @var EntityRepository $repository */
-            $repository = $this->doctrine->getRepository($entityClass);
-
-            return new DoctrineResourceRepository($this->doctrine, $repository);
         }
+
+        /** @var EntityRepository $repository */
+        $repository = $this->doctrine->getRepository($entityClass);
+
+        return new DoctrineResourceRepository($this->doctrine, $repository);
     }
 }

@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright (c) 2017 trivago
+ * Copyright (c) 2017-present trivago GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,9 +14,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
- * @author Moein Akbarof <moein.akbarof@trivago.com>
- * @date 2017-09-10
  */
 
 namespace Trivago\Jade\Application\JsonApi\Request;
@@ -27,24 +24,28 @@ use Trivago\Jade\Domain\ResourceManager\Bag\ResourceRelationshipBag;
 class UpdateRequest extends CreateRequest
 {
     /**
-     * @var mixed
+     * @var string
      */
     protected $id;
 
     /**
-     * @param string $resourceName
-     * @param mixed $id
-     * @param ResourceAttributeBag $attributes
+     * @param string                  $resourceName
+     * @param string                  $id
+     * @param ResourceAttributeBag    $attributes
      * @param ResourceRelationshipBag $relationships
      */
-    public function __construct($resourceName, $id, ResourceAttributeBag $attributes, ResourceRelationshipBag $relationships)
-    {
+    public function __construct(
+        $resourceName,
+        $id,
+        ResourceAttributeBag $attributes,
+        ResourceRelationshipBag $relationships
+    ) {
         parent::__construct($resourceName, $attributes, $relationships);
         $this->id = $id;
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getId()
     {

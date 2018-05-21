@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright (c) 2017 trivago
+ * Copyright (c) 2017-present trivago GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,13 +14,11 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
- * @author Moein Akbarof <moein.akbarof@trivago.com>
- * @date 2017-09-10
  */
 
 namespace Trivago\Jade\Application\Listener;
 
+use Trivago\Jade\Application\JsonApi\Error\ErrorInterface;
 use Trivago\Jade\Application\JsonApi\Request\CollectionRequest;
 use Trivago\Jade\Application\JsonApi\Request\CreateRequest;
 use Trivago\Jade\Application\JsonApi\Request\DeleteRequest;
@@ -30,44 +28,50 @@ use Trivago\Jade\Application\JsonApi\Request\UpdateRequest;
 class ListenerManager
 {
     /**
-     * Key is the priority and the values
+     * Key is the priority and the values.
+     *
      * @var RequestListener[][]
      */
     private $requestListeners = [];
 
     /**
-     * Key is the priority and the values
+     * Key is the priority and the values.
+     *
      * @var ResponseListener[][]
      */
     private $responseListeners = [];
 
     /**
-     * Key is the priority and the values
+     * Key is the priority and the values.
+     *
      * @var CreateListener[][]
      */
     private $createListeners = [];
 
     /**
-     * Key is the priority and the values
+     * Key is the priority and the values.
+     *
      * @var UpdateListener[][]
      */
     private $updateListeners = [];
 
     /**
-     * Key is the priority and the values
+     * Key is the priority and the values.
+     *
      * @var DeleteListener[][]
      */
     private $deleteListeners = [];
 
     /**
-     * Key is the priority and the values
+     * Key is the priority and the values.
+     *
      * @var ExceptionListener[][]
      */
     private $exceptionListeners = [];
 
     /**
      * @param RequestListener $requestListener
-     * @param int $priority
+     * @param int             $priority
      */
     public function addRequestListener(RequestListener $requestListener, $priority)
     {
@@ -76,7 +80,7 @@ class ListenerManager
 
     /**
      * @param ResponseListener $responseListener
-     * @param int $priority
+     * @param int              $priority
      */
     public function addResponseListener(ResponseListener $responseListener, $priority)
     {
@@ -85,7 +89,7 @@ class ListenerManager
 
     /**
      * @param CreateListener $createListener
-     * @param int $priority
+     * @param int            $priority
      */
     public function addCreateListener(CreateListener $createListener, $priority)
     {
@@ -94,7 +98,7 @@ class ListenerManager
 
     /**
      * @param UpdateListener $updateListener
-     * @param int $priority
+     * @param int            $priority
      */
     public function addUpdateListener(UpdateListener $updateListener, $priority)
     {
@@ -103,7 +107,7 @@ class ListenerManager
 
     /**
      * @param DeleteListener $deleteListener
-     * @param int $priority
+     * @param int            $priority
      */
     public function addDeleteListener(DeleteListener $deleteListener, $priority)
     {
@@ -112,14 +116,14 @@ class ListenerManager
 
     /**
      * @param ExceptionListener $exceptionListener
-     * @param int $priority
+     * @param int               $priority
      */
     public function addExceptionListener(ExceptionListener $exceptionListener, $priority)
     {
         $this->exceptionListeners[$priority][] = $exceptionListener;
     }
 
-/**
+    /**
      * @return RequestListener[]
      */
     public function getRequestListeners()
@@ -245,7 +249,7 @@ class ListenerManager
     }
 
     /**
-     * @param mixed $entityId
+     * @param mixed  $entityId
      * @param string $resourceName
      */
     public function afterDelete($entityId, $resourceName)
@@ -261,7 +265,8 @@ class ListenerManager
 
     /**
      * @param EntityRequest $request
-     * @param string $resourceName
+     * @param string        $resourceName
+     *
      * @return EntityRequest
      */
     public function onGetEntityRequest(EntityRequest $request, $resourceName)
@@ -288,7 +293,8 @@ class ListenerManager
 
     /**
      * @param CollectionRequest $request
-     * @param string $resourceName
+     * @param string            $resourceName
+     *
      * @return CollectionRequest
      */
     public function onGetCollectionRequest(CollectionRequest $request, $resourceName)
@@ -315,7 +321,8 @@ class ListenerManager
 
     /**
      * @param CreateRequest $request
-     * @param string $resourceName
+     * @param string        $resourceName
+     *
      * @return CreateRequest
      */
     public function onCreateRequest(CreateRequest $request, $resourceName)
@@ -342,7 +349,8 @@ class ListenerManager
 
     /**
      * @param UpdateRequest $request
-     * @param string $resourceName
+     * @param string        $resourceName
+     *
      * @return UpdateRequest
      */
     public function onUpdateRequest(UpdateRequest $request, $resourceName)
@@ -369,7 +377,8 @@ class ListenerManager
 
     /**
      * @param DeleteRequest $request
-     * @param string $resourceName
+     * @param string        $resourceName
+     *
      * @return DeleteRequest
      */
     public function onDeleteRequest(DeleteRequest $request, $resourceName)
@@ -456,8 +465,9 @@ class ListenerManager
 
     /**
      * @param \Exception $exception
-     * @param $resourceName
-     * @return null|\Trivago\Jade\Application\JsonApi\Error\ErrorInterface[]
+     * @param string     $resourceName
+     *
+     * @return null|ErrorInterface[]
      */
     public function onException(\Exception $exception, $resourceName)
     {
@@ -477,6 +487,7 @@ class ListenerManager
 
     /**
      * @param array $array
+     *
      * @return array
      */
     private function flattenListeners($array)

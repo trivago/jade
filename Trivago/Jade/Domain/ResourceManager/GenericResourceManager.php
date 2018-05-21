@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright (c) 2017 trivago
+ * Copyright (c) 2017-present trivago GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,9 +14,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
- * @author Moein Akbarof <moein.akbarof@trivago.com>
- * @date 2017-09-10
  */
 
 namespace Trivago\Jade\Domain\ResourceManager;
@@ -25,6 +22,7 @@ use Trivago\Jade\Domain\ResourceManager\Bag\Relationship;
 use Trivago\Jade\Domain\ResourceManager\Bag\ResourceAttributeBag;
 use Trivago\Jade\Domain\ResourceManager\Bag\ResourceRelationshipBag;
 use Trivago\Jade\Domain\ResourceManager\Exception\InvalidModelSet;
+use Trivago\Jade\Domain\ResourceManager\Exception\MissingEntity;
 
 class GenericResourceManager implements ResourceManager
 {
@@ -45,8 +43,8 @@ class GenericResourceManager implements ResourceManager
 
     /**
      * @param FieldResolver $fieldResolver
-     * @param string $createMethod
-     * @param string $onUpdateMethod
+     * @param string        $createMethod
+     * @param string        $onUpdateMethod
      */
     public function __construct(FieldResolver $fieldResolver, $createMethod, $onUpdateMethod)
     {
@@ -56,7 +54,10 @@ class GenericResourceManager implements ResourceManager
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
+     *
+     * @throws MissingEntity
+     * @throws InvalidModelSet
      */
     public function create(ResourceAttributeBag $resourceAttributeBag, ResourceRelationshipBag $resourceRelationshipBag, $entityClass)
     {
@@ -99,15 +100,15 @@ class GenericResourceManager implements ResourceManager
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
+     *
+     * @throws MissingEntity
+     * @throws InvalidModelSet
      */
     public function update($entity, ResourceAttributeBag $resourceAttributeBag, ResourceRelationshipBag $resourceRelationshipBag)
     {
         $this->updateAttributes($entity, $resourceAttributeBag);
-        $this->updateRelationships(
-            $entity,
-            $resourceRelationshipBag
-        );
+        $this->updateRelationships($entity, $resourceRelationshipBag);
 
         $onUpdateMethod = $this->onUpdateMethod;
         if (method_exists($entity, $onUpdateMethod)) {
@@ -116,7 +117,9 @@ class GenericResourceManager implements ResourceManager
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
+     *
+     * @throws InvalidModelSet
      */
     public function updateAttributes($entity, ResourceAttributeBag $resourceAttributeBag)
     {
@@ -133,7 +136,10 @@ class GenericResourceManager implements ResourceManager
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
+     *
+     * @throws MissingEntity
+     * @throws InvalidModelSet
      */
     public function updateRelationships($entity, ResourceRelationshipBag $resourceRelationshipBag)
     {
@@ -147,9 +153,12 @@ class GenericResourceManager implements ResourceManager
     }
 
     /**
-     * @param string $relationshipName
+     * @param string       $relationshipName
      * @param Relationship $relationship
-     * @param object $entity
+     * @param object       $entity
+     *
+     * @throws MissingEntity
+     * @throws InvalidModelSet
      */
     private function updateRelationship($relationshipName, Relationship $relationship, $entity)
     {
@@ -163,6 +172,4 @@ class GenericResourceManager implements ResourceManager
 
         $entity->$method($this->fieldResolver->getRelationshipValue($relationship));
     }
-
-
 }

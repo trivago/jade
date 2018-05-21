@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright (c) 2017 trivago
+ * Copyright (c) 2017-present trivago GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,15 +14,14 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
- * @author Moein Akbarof <moein.akbarof@trivago.com>
- * @date 2017-09-10
  */
 
 namespace Trivago\Jade\Application\Framework\JadeBundle\DependencyInjection\Compiler;
 
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
+use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
 use Symfony\Component\DependencyInjection\Reference;
 use Trivago\Jade\Application\Listener\CreateListener;
 use Trivago\Jade\Application\Listener\DeleteListener;
@@ -36,7 +35,10 @@ class ListenerPass implements CompilerPassInterface
     const TAG = 'trivago_jade.listener';
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
+     *
+     * @throws InvalidArgumentException
+     * @throws ServiceNotFoundException
      */
     public function process(ContainerBuilder $container)
     {

@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright (c) 2017 trivago
+ * Copyright (c) 2017-present trivago GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,13 +14,11 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
- * @author Moein Akbarof <moein.akbarof@trivago.com>
- * @date 2017-09-10
  */
 
 namespace Trivago\Jade\Tests;
 
+use Faker\Factory;
 use Faker\Generator;
 use PhpDocReader\PhpDocReader;
 
@@ -28,20 +26,27 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
 {
     const MOCK_SUFFIX = 'Prophecy';
 
-    /** @var Generator */
+    /**
+     * @var Generator
+     */
     protected $faker;
 
+    /**
+     * {@inheritdoc}
+     *
+     * @throws \Exception
+     */
     protected function tearDown()
     {
         $this->verifyMockObjects();
     }
 
     /**
-     * Here every property ending with prophecy will be magically initialized with the corresponding prophecy!(El mago)
+     * Here every property ending with prophecy will be magically initialized with the corresponding prophecy! (El mago)
      */
     public function setUp()
     {
-        $this->faker = \Faker\Factory::create();
+        $this->faker = Factory::create();
 
         $reader = new PhpDocReader();
 
@@ -57,16 +62,24 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
         }
     }
 
-    public static function assertObjectSameFields($object, $values)
+    /**
+     * @param object $object
+     * @param array  $values
+     */
+    public static function assertObjectSameFields($object, array $values)
     {
         foreach ($values as $property => $value) {
             static::assertEquals($value, $object->$property);
         }
     }
 
-    public static function assertArraySameElements($array1, $array2)
+    /**
+     * @param array $array1
+     * @param array $array2
+     */
+    public static function assertArraySameElements(array $array1, array $array2)
     {
-        static::assertTrue(array_diff($array1, $array2) === array_diff($array2, $array1));
+        static::assertSame(array_diff($array1, $array2), array_diff($array2, $array1));
     }
 }
 

@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright (c) 2017 trivago
+ * Copyright (c) 2017-present trivago GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,9 +14,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
- * @author Moein Akbarof <moein.akbarof@trivago.com>
- * @date 2017-09-10
  */
 
 namespace Trivago\Jade\Application\JsonApi\Config;
@@ -29,7 +26,7 @@ class ResourceConfigProvider
         'excluded_attributes',
         'virtual_paths',
         'attributes_permissions',
-        'virtual_properties'
+        'virtual_properties',
     ];
 
     /**
@@ -42,6 +39,13 @@ class ResourceConfigProvider
      */
     private $resourceConfigs = [];
 
+    /**
+     * @param ResourceConfigValidator $configValidator
+     * @param array                   $rawResourceConfigs
+     * @param string                  $defaultReadRole
+     * @param string                  $defaultManipulateRole
+     * @param string                  $createMethod
+     */
     public function __construct(
         ResourceConfigValidator $configValidator,
         array $rawResourceConfigs,
@@ -92,19 +96,21 @@ class ResourceConfigProvider
     }
 
     /**
-     * @param $name
+     * @param string $name
      * @return ResourceConfig
      */
     public function getResourceConfig($name)
     {
         if (!isset($this->resourceConfigs[$name])) {
-            throw new \InvalidArgumentException(sprintf('No resource config found for resource name %s.', $name));
+            throw new \InvalidArgumentException(
+                sprintf('No resource config found for resource name %s.', $name)
+            );
         }
         return $this->resourceConfigs[$name];
     }
 
     /**
-     * @param array $rawResourceConfig
+     * @param array  $rawResourceConfig
      * @param string $defaultReadRole
      * @param string $defaultManipulateRole
      */
@@ -144,6 +150,7 @@ class ResourceConfigProvider
     /**
      * @param array $allConfig
      * @param array $resourceConfig
+     *
      * @return int
      */
     private function getHierarchyLevel(array $allConfig, array $resourceConfig)

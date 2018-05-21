@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright (c) 2017 trivago
+ * Copyright (c) 2017-present trivago GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,9 +14,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
- * @author Moein Akbarof <moein.akbarof@trivago.com>
- * @date 2017-09-10
  */
 
 namespace Trivago\Jade\Application\JsonApi\Mapping;
@@ -51,19 +48,22 @@ class RuntimeResourceMapper implements ResourceMapper
     private $tokenStorage;
 
     /**
-     * @param ResourceConfigProvider $resourceConfigProvider
+     * @param ResourceConfigProvider        $resourceConfigProvider
      * @param AuthorizationCheckerInterface $authorizationChecker
-     * @param TokenStorageInterface $tokenStorage
+     * @param TokenStorageInterface         $tokenStorage
      */
-    public function __construct(ResourceConfigProvider $resourceConfigProvider, AuthorizationCheckerInterface $authorizationChecker, TokenStorageInterface $tokenStorage)
-    {
+    public function __construct(
+        ResourceConfigProvider $resourceConfigProvider,
+        AuthorizationCheckerInterface $authorizationChecker,
+        TokenStorageInterface $tokenStorage
+    ) {
         $this->resourceConfigProvider = $resourceConfigProvider;
         $this->authorizationChecker = $authorizationChecker;
         $this->tokenStorage = $tokenStorage;
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getResourceMapping($resourceName, $resource)
     {
@@ -79,9 +79,9 @@ class RuntimeResourceMapper implements ResourceMapper
 
     /**
      * @param \ReflectionClass $reflection
-     * @param ResourceConfig $resourceConfig
-     * @param object $resource
-     * @param ResourceMapping $mapping
+     * @param ResourceConfig   $resourceConfig
+     * @param object           $resource
+     * @param ResourceMapping  $mapping
      */
     private function setupAttributes(\ReflectionClass $reflection, ResourceConfig $resourceConfig, $resource, ResourceMapping $mapping)
     {
@@ -95,11 +95,9 @@ class RuntimeResourceMapper implements ResourceMapper
                 continue;
             }
 
-            if ($resourceConfig->hasAttributePermissionFor($propertyName)) {
-                if (!$this->hasPermission($resource, $resourceConfig->getAttributePermissionsFor($propertyName))) {
+            if ($resourceConfig->hasAttributePermissionFor($propertyName) && !$this->hasPermission($resource, $resourceConfig->getAttributePermissionsFor($propertyName))) {
                     continue;
                 }
-            }
 
             $ucPropertyName = ucfirst($propertyName);
             $methods = ['get'.$ucPropertyName, 'has'.$ucPropertyName, 'is'.$ucPropertyName, $propertyName];
@@ -119,8 +117,8 @@ class RuntimeResourceMapper implements ResourceMapper
 
     /**
      * @param \ReflectionClass $reflection
-     * @param ResourceConfig $resourceConfig
-     * @param ResourceMapping $mapping
+     * @param ResourceConfig   $resourceConfig
+     * @param ResourceMapping  $mapping
      */
     private function setupRelationships(\ReflectionClass $reflection, ResourceConfig $resourceConfig, ResourceMapping $mapping)
     {
@@ -137,8 +135,9 @@ class RuntimeResourceMapper implements ResourceMapper
     }
 
     /**
-     * @param object $resource
+     * @param object                  $resource
      * @param AttributePermission[][] $permissions
+     *
      * @return bool
      */
     private function hasPermission($resource, $permissions)

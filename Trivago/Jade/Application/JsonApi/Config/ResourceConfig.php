@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright (c) 2017 trivago
+ * Copyright (c) 2017-present trivago GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,9 +14,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
- * @author Moein Akbarof <moein.akbarof@trivago.com>
- * @date 2017-09-10
  */
 
 namespace Trivago\Jade\Application\JsonApi\Config;
@@ -116,6 +113,7 @@ class ResourceConfig
 
     /**
      * @param array $data
+     *
      * @return ResourceConfig
      */
     public static function createWithData($data)
@@ -127,7 +125,7 @@ class ResourceConfig
                 $relationshipNames = [];
                 foreach ($value as $relationship) {
                     $relationshipName = $relationship['name'];
-                    if (in_array($relationshipName, $relationshipNames)) {
+                    if (in_array($relationshipName, $relationshipNames, true)) {
                         throw new \InvalidArgumentException(
                             sprintf('Duplicated relationship "%s" found. Maybe because of the parent?', $relationshipName)
                         );
@@ -169,14 +167,14 @@ class ResourceConfig
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getName()
     {
         return $this->name;
     }
     /**
-     * @return mixed
+     * @return string
      */
     public function getEntityClass()
     {
@@ -193,6 +191,7 @@ class ResourceConfig
 
     /**
      * @param string $path
+     *
      * @return string
      */
     public function getRealPath($path)
@@ -222,15 +221,17 @@ class ResourceConfig
 
     /**
      * @param string $attributeName
-     * @return array
+     *
+     * @return bool
      */
     public function isAttributeExcluded($attributeName)
     {
-        return in_array($attributeName, $this->excludedAttributes);
+        return in_array($attributeName, $this->excludedAttributes, true);
     }
 
     /**
      * @param string $attributeName
+     *
      * @return AttributePermission[][]
      */
     public function getAttributePermissionsFor($attributeName)
@@ -243,6 +244,7 @@ class ResourceConfig
 
     /**
      * @param string $attributeName
+     *
      * @return bool
      */
     public function hasAttributePermissionFor($attributeName)
@@ -260,6 +262,7 @@ class ResourceConfig
 
     /**
      * @param string $name
+     *
      * @return bool
      */
     public function hasRelationship($name)
@@ -274,7 +277,8 @@ class ResourceConfig
     }
 
     /**
-     * @param $name
+     * @param string $name
+     *
      * @return ResourceRelationship
      */
     public function getRelationship($name)
@@ -293,9 +297,12 @@ class ResourceConfig
      */
     public function getRelationshipNames()
     {
-        return array_map(function(ResourceRelationship $relationship) {
-            return $relationship->getName();
-        }, $this->relationships);
+        return array_map(
+            function (ResourceRelationship $relationship) {
+                return $relationship->getName();
+            },
+            $this->relationships
+        );
     }
 
     /**
@@ -316,6 +323,7 @@ class ResourceConfig
 
     /**
      * @param string $attributeName
+     *
      * @return array
      */
     public function getValueObjectFor($attributeName)
@@ -329,6 +337,7 @@ class ResourceConfig
 
     /**
      * @param string $attributeName
+     *
      * @return bool
      */
     public function hasValueObject($attributeName)
@@ -386,6 +395,7 @@ class ResourceConfig
 
     /**
      * @param string $type
+     *
      * @return bool
      */
     public function isTypeValid($type)
@@ -427,6 +437,7 @@ class ResourceConfig
 
     /**
      * @param string $action
+     *
      * @return string
      */
     private function getRoleFor($action)
@@ -434,16 +445,26 @@ class ResourceConfig
         return $this->roles[$action];
     }
 
+    /**
+     * @param string $string
+     *
+     * @return string
+     */
     private static function underscoreToCamelCase($string)
     {
         $string = ucwords($string, '_');
-        $string[0] = strtolower(($string[0]));
+        $string[0] = strtolower($string[0]);
 
         return str_replace('_', '', $string);
     }
 
+    /**
+     * @param string $action
+     *
+     * @return bool
+     */
     private function isAllowed($action)
     {
-        return in_array($action, $this->allowedActions);
+        return in_array($action, $this->allowedActions, true);
     }
 }

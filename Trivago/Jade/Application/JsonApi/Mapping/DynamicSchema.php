@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright (c) 2017 trivago
+ * Copyright (c) 2017-present trivago GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,9 +14,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
- * @author Moein Akbarof <moein.akbarof@trivago.com>
- * @date 2017-09-10
  */
 
 namespace Trivago\Jade\Application\JsonApi\Mapping;
@@ -40,7 +37,7 @@ class DynamicSchema extends SchemaProvider
     /**
      * @var array
      */
-    private $requestedRelationships = [];
+    private $requestedRelationships;
 
     /**
      * @var ResourceMapper
@@ -52,13 +49,20 @@ class DynamicSchema extends SchemaProvider
      */
     private $urlPrefix;
 
+    /**
+     * @param SchemaFactoryInterface $factory
+     * @param ResourceConfig         $resourceConfig
+     * @param ResourceMapper         $resourceMapper
+     * @param array                  $requestedRelationships
+     * @param string                 $urlPrefix
+     */
     public function __construct(
         SchemaFactoryInterface $factory,
         ResourceConfig $resourceConfig,
         ResourceMapper $resourceMapper,
         array $requestedRelationships,
-        $urlPrefix)
-    {
+        $urlPrefix
+    ) {
         $this->resourceConfig = $resourceConfig;
         $this->resourceType = $resourceConfig->getName();
         $this->resourceMapper = $resourceMapper;
@@ -76,7 +80,7 @@ class DynamicSchema extends SchemaProvider
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getId($resource)
     {
@@ -110,7 +114,7 @@ class DynamicSchema extends SchemaProvider
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getSelfSubUrl($resource = null)
     {
@@ -118,7 +122,9 @@ class DynamicSchema extends SchemaProvider
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
+     *
+     * @throws InvalidModelPath
      */
     public function getRelationships($resource, $isPrimary, array $includeRelationships)
     {
@@ -141,7 +147,7 @@ class DynamicSchema extends SchemaProvider
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getIncludePaths()
     {
@@ -149,20 +155,19 @@ class DynamicSchema extends SchemaProvider
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getIncludedResourceLinks($resource)
     {
-        $links = [
+        return [
             LinkInterface::SELF => $this->getSelfSubLink($resource),
         ];
-
-        return $links;
     }
 
     /**
      * @param object $resource
      * @param Property $property
+     *
      * @return Value
      */
     protected function getPropertyValue($resource, Property $property)
@@ -174,6 +179,7 @@ class DynamicSchema extends SchemaProvider
 
     /**
      * @param mixed $value
+     *
      * @return bool
      */
     protected function isSimpleValue($value)
@@ -188,6 +194,7 @@ class DynamicSchema extends SchemaProvider
 
     /**
      * @param mixed $value
+     *
      * @return string|array
      */
     protected function getSimpleValue($value)

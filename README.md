@@ -26,6 +26,8 @@ First install the library:
 Next add the bundle to the kernel:
 
 ```php
+<?php
+
 public function registerBundles()
 {
         $bundles = [

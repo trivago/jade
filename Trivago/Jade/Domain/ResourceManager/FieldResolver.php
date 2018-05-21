@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright (c) 2017 trivago
+ * Copyright (c) 2017-present trivago GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,9 +14,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
- * @author Moein Akbarof <moein.akbarof@trivago.com>
- * @date 2017-09-10
  */
 
 namespace Trivago\Jade\Domain\ResourceManager;
@@ -47,18 +44,22 @@ class FieldResolver
     }
 
     /**
-     * @param string $class
-     * @param string $method
-     * @param ResourceAttributeBag $resourceAttributeBag
+     * @param string                  $class
+     * @param string                  $method
+     * @param ResourceAttributeBag    $resourceAttributeBag
      * @param ResourceRelationshipBag $resourceRelationshipBag
+     *
      * @return ResolvedMethodParameters
+     *
+     * @throws MissingEntity
+     * @throws InvalidModelSet
      */
     public function resolveMethodParameters(
         $class,
         $method,
         ResourceAttributeBag $resourceAttributeBag,
-        ResourceRelationshipBag $resourceRelationshipBag)
-    {
+        ResourceRelationshipBag $resourceRelationshipBag
+    ) {
         $methodParameters = [];
         $relationshipNames = $resourceRelationshipBag->getAllRelationshipNames();
         $attributeNames = $resourceAttributeBag->getAllAttributeNames();
@@ -76,9 +77,12 @@ class FieldResolver
 
     /**
      * @param \ReflectionParameter $reflectionParameter
-     * @param array $attributeNames
+     * @param array                $attributeNames
      * @param ResourceAttributeBag $resourceAttributeBag
+     *
      * @return mixed
+     *
+     * @throws InvalidModelSet
      */
     private function resolveAttribute(\ReflectionParameter $reflectionParameter, array &$attributeNames, ResourceAttributeBag $resourceAttributeBag)
     {
@@ -88,10 +92,14 @@ class FieldResolver
     }
 
     /**
-     * @param \ReflectionParameter $reflectionParameter
-     * @param array $relationshipNames
+     * @param \ReflectionParameter    $reflectionParameter
+     * @param array                   $relationshipNames
      * @param ResourceRelationshipBag $resourceRelationshipBag
+     *
      * @return array|object
+     *
+     * @throws MissingEntity
+     * @throws InvalidModelSet
      */
     private function resolveRelationship(\ReflectionParameter $reflectionParameter, array &$relationshipNames, ResourceRelationshipBag $resourceRelationshipBag)
     {
@@ -102,7 +110,10 @@ class FieldResolver
 
     /**
      * @param Relationship $relationship
+     *
      * @return array|object
+     *
+     * @throws MissingEntity
      */
     public function getRelationshipValue(Relationship $relationship)
     {
@@ -131,11 +142,13 @@ class FieldResolver
 
     /**
      * @param \ReflectionParameter $reflectionParameter
-     * @param array $passedValues
+     * @param array                $passedValues
+     *
+     * @throws InvalidModelSet
      */
     private function checkParameterExists(\ReflectionParameter $reflectionParameter, array &$passedValues)
     {
-        $attributePosition = array_search($reflectionParameter->getName(), $passedValues);
+        $attributePosition = array_search($reflectionParameter->getName(), $passedValues, true);
         if (false === $attributePosition) {
             throw new InvalidModelSet(
                 '[attributes|relationships].'.$reflectionParameter->getName(),

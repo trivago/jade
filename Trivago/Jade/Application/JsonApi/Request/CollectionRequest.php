@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright (c) 2017 trivago
+ * Copyright (c) 2017-present trivago GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,9 +14,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
- * @author Moein Akbarof <moein.akbarof@trivago.com>
- * @date 2017-09-10
  */
 
 namespace Trivago\Jade\Application\JsonApi\Request;
@@ -47,10 +44,10 @@ class CollectionRequest extends ResourceRequest
     protected $sorts;
 
     /**
-     * @param string $resourceName
-     * @param string[] $fieldsets
-     * @param string[] $relationships
-     * @param Constraint $constraint
+     * @param string         $resourceName
+     * @param string[]       $fieldsets
+     * @param string[]       $relationships
+     * @param Constraint     $constraint
      * @param SortCollection $sorts
      */
     public function __construct(
@@ -58,8 +55,8 @@ class CollectionRequest extends ResourceRequest
         array $fieldsets,
         array $relationships,
         Constraint $constraint,
-        SortCollection $sorts)
-    {
+        SortCollection $sorts
+    ) {
         parent::__construct($resourceName);
         $this->fieldsets = $fieldsets;
         $this->relationships = $relationships;
