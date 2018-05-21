@@ -21,13 +21,13 @@ namespace Trivago\Jade\Application\JsonApi\Request;
 class DeleteRequest extends ResourceRequest
 {
     /**
-     * @var mixed
+     * @var string
      */
     protected $id;
 
     /**
      * @param string $resourceName
-     * @param mixed  $id
+     * @param string $id
      */
     public function __construct($resourceName, $id)
     {
@@ -36,7 +36,7 @@ class DeleteRequest extends ResourceRequest
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getId()
     {

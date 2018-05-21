@@ -21,7 +21,7 @@ namespace Trivago\Jade\Application\JsonApi\Request;
 class ActionRequest extends ResourceRequest
 {
     /**
-     * @var mixed
+     * @var string
      */
     protected $id;
 

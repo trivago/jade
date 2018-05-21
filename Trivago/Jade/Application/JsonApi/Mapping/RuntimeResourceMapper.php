@@ -102,8 +102,7 @@ class RuntimeResourceMapper implements ResourceMapper
                 continue;
             }
 
-            if ($resourceConfig->hasAttributePermissionFor($propertyName)
-                && !$this->hasPermission($resource, $resourceConfig->getAttributePermissionsFor($propertyName))) {
+            if ($resourceConfig->hasAttributePermissionFor($propertyName) && !$this->hasPermission($resource, $resourceConfig->getAttributePermissionsFor($propertyName))) {
                     continue;
                 }
 

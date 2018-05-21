@@ -24,13 +24,13 @@ use Trivago\Jade\Domain\ResourceManager\Bag\ResourceRelationshipBag;
 class UpdateRequest extends CreateRequest
 {
     /**
-     * @var mixed
+     * @var string
      */
     protected $id;
 
     /**
      * @param string                  $resourceName
-     * @param mixed                   $id
+     * @param string                  $id
      * @param ResourceAttributeBag    $attributes
      * @param ResourceRelationshipBag $relationships
      */
@@ -45,7 +45,7 @@ class UpdateRequest extends CreateRequest
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getId()
     {

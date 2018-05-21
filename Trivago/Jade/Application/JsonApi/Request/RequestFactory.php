@@ -142,7 +142,7 @@ class RequestFactory
     /**
      * @param ParameterBag $query
      * @param string       $resourceName
-     * @param mixed        $resourceId
+     * @param string       $resourceId
      *
      * @return EntityRequest
      * @throws InvalidRequest
@@ -161,7 +161,7 @@ class RequestFactory
 
     /**
      * @param string $resourceName
-     * @param mixed  $resourceId
+     * @param string $resourceId
      *
      * @return DeleteRequest
      */
@@ -173,7 +173,7 @@ class RequestFactory
     /**
      * @param Request $request
      * @param string  $resourceName
-     * @param mixed   $resourceId
+     * @param string  $resourceId
      *
      * @return UpdateRequest
      *

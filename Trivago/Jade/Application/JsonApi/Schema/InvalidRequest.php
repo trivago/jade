@@ -60,7 +60,7 @@ class InvalidRequest extends \RuntimeException
     }
 
     /**
-     * @param mixed  $id
+     * @param string $id
      * @param string $code
      * @param string $message
      *

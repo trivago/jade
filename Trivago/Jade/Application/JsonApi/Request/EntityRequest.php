@@ -21,7 +21,7 @@ namespace Trivago\Jade\Application\JsonApi\Request;
 class EntityRequest extends ResourceRequest
 {
     /**
-     * @var mixed
+     * @var string
      */
     protected $id;
 
@@ -37,7 +37,7 @@ class EntityRequest extends ResourceRequest
 
     /**
      * @param string   $resourceName
-     * @param mixed    $id
+     * @param string   $id
      * @param string[] $fieldsets
      * @param string[] $relationships
      */
@@ -50,7 +50,7 @@ class EntityRequest extends ResourceRequest
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getId()
     {
