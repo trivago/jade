@@ -64,8 +64,6 @@ class ResourceRepositoryProvider implements ResourceRepositoryProviderInterface
 
     /**
      * {@inheritdoc}
-     *
-     * @throws \LogicException
      */
     public function getRepository($entityClass)
     {

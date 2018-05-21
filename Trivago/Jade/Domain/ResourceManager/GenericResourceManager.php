@@ -58,9 +58,6 @@ class GenericResourceManager implements ResourceManager
      *
      * @throws MissingEntity
      * @throws InvalidModelSet
-     * @throws \InvalidArgumentException
-     * @throws \LogicException
-     * @throws \ReflectionException
      */
     public function create(ResourceAttributeBag $resourceAttributeBag, ResourceRelationshipBag $resourceRelationshipBag, $entityClass)
     {
@@ -107,8 +104,6 @@ class GenericResourceManager implements ResourceManager
      *
      * @throws MissingEntity
      * @throws InvalidModelSet
-     * @throws \LogicException
-     * @throws \InvalidArgumentException
      */
     public function update($entity, ResourceAttributeBag $resourceAttributeBag, ResourceRelationshipBag $resourceRelationshipBag)
     {
@@ -124,7 +119,6 @@ class GenericResourceManager implements ResourceManager
     /**
      * {@inheritdoc}
      *
-     * @throws \InvalidArgumentException
      * @throws InvalidModelSet
      */
     public function updateAttributes($entity, ResourceAttributeBag $resourceAttributeBag)
@@ -146,8 +140,6 @@ class GenericResourceManager implements ResourceManager
      *
      * @throws MissingEntity
      * @throws InvalidModelSet
-     * @throws \LogicException
-     * @throws \InvalidArgumentException
      */
     public function updateRelationships($entity, ResourceRelationshipBag $resourceRelationshipBag)
     {
@@ -166,7 +158,6 @@ class GenericResourceManager implements ResourceManager
      * @param object       $entity
      *
      * @throws MissingEntity
-     * @throws \LogicException
      * @throws InvalidModelSet
      */
     private function updateRelationship($relationshipName, Relationship $relationship, $entity)

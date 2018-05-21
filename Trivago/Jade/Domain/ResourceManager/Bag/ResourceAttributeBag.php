@@ -37,8 +37,6 @@ class ResourceAttributeBag
      * @param string $attributeName
      *
      * @return mixed
-     *
-     * @throws \InvalidArgumentException
      */
     public function getValue($attributeName)
     {

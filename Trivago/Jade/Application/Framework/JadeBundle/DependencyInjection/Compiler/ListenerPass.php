@@ -39,7 +39,6 @@ class ListenerPass implements CompilerPassInterface
      *
      * @throws InvalidArgumentException
      * @throws ServiceNotFoundException
-     * @throws \ReflectionException
      */
     public function process(ContainerBuilder $container)
     {

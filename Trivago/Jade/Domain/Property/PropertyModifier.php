@@ -24,8 +24,6 @@ class PropertyModifier
      * @param object $object
      * @param string $property
      * @param mixed  $newValue
-     *
-     * @throws \ReflectionException
      */
     public static function changeProperty($object, $property, $newValue)
     {

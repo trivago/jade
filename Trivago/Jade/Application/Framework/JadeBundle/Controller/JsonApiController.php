@@ -204,9 +204,6 @@ class JsonApiController extends Controller
      * @throws InvalidPath
      * @throws AccessDeniedException
      * @throws InvalidRequest
-     * @throws \LogicException
-     * @throws \InvalidArgumentException
-     * @throws \ReflectionException
      */
     protected function getCollection($resourceName, Request $httpRequest)
     {
@@ -265,9 +262,6 @@ class JsonApiController extends Controller
      * @throws InvalidPath
      * @throws AccessDeniedException
      * @throws InvalidRequest
-     * @throws \LogicException
-     * @throws \InvalidArgumentException
-     * @throws \ReflectionException
      */
     protected function getEntity($resourceName, $id, Request $httpRequest)
     {
@@ -295,8 +289,6 @@ class JsonApiController extends Controller
      * @return JsonApiResponse
      *
      * @throws AccessDeniedException
-     * @throws \LogicException
-     * @throws \InvalidArgumentException
      */
     protected function deleteEntity($resourceName, $id)
     {
@@ -328,8 +320,6 @@ class JsonApiController extends Controller
      *
      * @throws AccessDeniedException
      * @throws InvalidRequest
-     * @throws \LogicException
-     * @throws \InvalidArgumentException
      */
     protected function createEntity($resourceName, Request $httpRequest)
     {
@@ -372,8 +362,6 @@ class JsonApiController extends Controller
      *
      * @throws InvalidRequest
      * @throws AccessDeniedException
-     * @throws \LogicException
-     * @throws \InvalidArgumentException
      */
     protected function updateEntity($resourceName, $id, Request $httpRequest)
     {
@@ -478,8 +466,6 @@ class JsonApiController extends Controller
      * @param string $resourceName
      *
      * @return ResourceRepository
-     *
-     * @throws \InvalidArgumentException
      */
     protected function getRepository($resourceName)
     {
@@ -492,9 +478,7 @@ class JsonApiController extends Controller
      * @param string $resourceName
      * @param string $action
      *
-     * @throws \InvalidArgumentException
      * @throws AccessDeniedException
-     * @throws \LogicException
      */
     protected function checkAccess($resourceName, $action)
     {

@@ -101,11 +101,8 @@ class RequestFactory
      *
      * @return CollectionRequest
      *
-     * @throws \LogicException
      * @throws InvalidPath
      * @throws InvalidRequest
-     * @throws \InvalidArgumentException
-     * @throws \ReflectionException
      */
     public function createCollectionRequest(ParameterBag $query, $resourceName)
     {
@@ -146,10 +143,7 @@ class RequestFactory
      *
      * @return EntityRequest
      * @throws InvalidRequest
-     * @throws \LogicException
-     * @throws \InvalidArgumentException
      * @throws InvalidPath
-     * @throws \ReflectionException
      */
     public function createEntityRequest(ParameterBag $query, $resourceName, $resourceId)
     {
@@ -177,8 +171,6 @@ class RequestFactory
      *
      * @return UpdateRequest
      *
-     * @throws \LogicException
-     * @throws \InvalidArgumentException
      * @throws InvalidRequest
      */
     public function createUpdateRequest(Request $request, $resourceName, $resourceId)
@@ -211,8 +203,6 @@ class RequestFactory
      * @return CreateRequest
      *
      * @throws InvalidRequest
-     * @throws \InvalidArgumentException
-     * @throws \LogicException
      */
     public function createCreateRequest(Request $request, $resourceName)
     {
@@ -233,7 +223,6 @@ class RequestFactory
     /**
      * @param Request $request
      *
-     * @throws \LogicException
      * @throws InvalidRequest
      */
     private function prepareRequest(Request $request)
@@ -254,7 +243,6 @@ class RequestFactory
      * @param array  $data
      *
      * @return ResourceAttributeBag
-     * @throws \InvalidArgumentException
      */
     private function createAttributeBag($resourceName, $data)
     {
@@ -281,7 +269,6 @@ class RequestFactory
      *
      * @throws InvalidRequest
      * @throws InvalidPath
-     * @throws \InvalidArgumentException
      */
     private function parseSorts(ResourceConfig $resourceConfig, $rawSorts)
     {
@@ -313,7 +300,6 @@ class RequestFactory
      *
      * @throws InvalidRequest
      * @throws InvalidPath
-     * @throws \InvalidArgumentException
      */
     private function parseFilters(ResourceConfig $resourceConfig, CompositeFilter $compositeFilter, $rawFilters, $errorKey)
     {
@@ -431,8 +417,6 @@ class RequestFactory
      *
      * @return ResourceRelationshipBag
      *
-     * @throws \LogicException
-     * @throws \InvalidArgumentException
      * @throws InvalidRequest
      */
     private function createRelationshipBag($data, $dataAsObject, $acceptNull)
@@ -494,7 +478,6 @@ class RequestFactory
      * @param string $relationshipName
      * @param string $relationshipPath
      *
-     * @throws \InvalidArgumentException
      * @throws InvalidRequest
      */
     private function validateRelationshipType($relationshipData, $relationshipName, $relationshipPath)
@@ -518,10 +501,7 @@ class RequestFactory
      * @return array
      *
      * @throws InvalidRequest
-     * @throws \LogicException
-     * @throws \InvalidArgumentException
      * @throws InvalidPath
-     * @throws \ReflectionException
      */
     private function getRelationships($resourceName, $includeString)
     {
@@ -541,10 +521,7 @@ class RequestFactory
      * @param Path[] $paths
      * @param bool   $canBeRelationship
      *
-     * @throws \LogicException
-     * @throws \InvalidArgumentException
      * @throws InvalidRequest
-     * @throws \ReflectionException
      */
     private function validatePaths($resourceName, $key, array $paths, $canBeRelationship)
     {

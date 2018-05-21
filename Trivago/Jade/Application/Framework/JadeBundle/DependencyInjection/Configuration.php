@@ -32,9 +32,6 @@ class Configuration implements ConfigurationInterface
 {
     /**
      * {@inheritdoc}
-     *
-     * @throws \RuntimeException
-     * @throws \InvalidArgumentException
      */
     public function getConfigTreeBuilder()
     {

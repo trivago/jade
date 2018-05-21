@@ -38,9 +38,6 @@ class Constraint
      */
     private $filterCollection;
 
-    /**
-     * @throws \InvalidArgumentException
-     */
     public function __construct()
     {
         $this->filterCollection = new CompositeFilter(CompositeFilterTypes::AND_EXPRESSION, []);

@@ -34,7 +34,7 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
     /**
      * {@inheritdoc}
      *
-     * @throws \Throwable
+     * @throws \Exception
      */
     protected function tearDown()
     {
@@ -43,9 +43,6 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
 
     /**
      * Here every property ending with prophecy will be magically initialized with the corresponding prophecy! (El mago)
-     *
-     * @throws \ReflectionException
-     * @throws \PhpDocReader\AnnotationException
      */
     public function setUp()
     {

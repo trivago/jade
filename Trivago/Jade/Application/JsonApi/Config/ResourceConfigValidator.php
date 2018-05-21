@@ -24,10 +24,6 @@ class ResourceConfigValidator
      * @param string $resourceName
      * @param array  $processedResourceConfig
      * @param array  $processedConfigs
-     *
-     * @throws \LogicException
-     * @throws \InvalidArgumentException
-     * @throws \ReflectionException
      */
     public function validate($resourceName, array $processedResourceConfig, array $processedConfigs)
     {
@@ -52,9 +48,6 @@ class ResourceConfigValidator
      * @param string $entityClass
      * @param array  $allowedActions
      * @param string $createMethod
-     *
-     * @throws \InvalidArgumentException
-     * @throws \ReflectionException
      */
     public function validateEntityClass($resourceName, $entityClass, array $allowedActions, $createMethod)
     {
@@ -73,8 +66,6 @@ class ResourceConfigValidator
      * @param string $resourceName
      * @param array  $relationships
      * @param array  $processedConfigs
-     *
-     * @throws \InvalidArgumentException
      */
     public function validateRelationships($resourceName, array $relationships, array $processedConfigs)
     {
@@ -90,9 +81,6 @@ class ResourceConfigValidator
     /**
      * @param string $resourceName
      * @param array  $valueObjects
-     *
-     * @throws \InvalidArgumentException
-     * @throws \ReflectionException
      */
     public function validateValueObjects($resourceName, array $valueObjects)
     {
@@ -116,8 +104,6 @@ class ResourceConfigValidator
      * @param string $resourceName
      * @param string $entityClass
      * @param array  $virtualProperty
-     *
-     * @throws \LogicException
      */
     public function validateVirtualProperties($resourceName, $entityClass, array $virtualProperty)
     {

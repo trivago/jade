@@ -28,8 +28,6 @@ class CompositeFilter extends Filter
     /**
      * @param string   $type
      * @param Filter[] $expressions
-     *
-     * @throws \InvalidArgumentException
      */
     public function __construct($type, array $expressions)
     {
@@ -69,8 +67,6 @@ class CompositeFilter extends Filter
 
     /**
      * @return Path[]
-     *
-     * @throws \LogicException
      */
     public function getAllPaths()
     {

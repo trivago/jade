@@ -106,8 +106,6 @@ class DoctrineResourceRepository implements ResourceRepository, ResourceCounter
 
     /**
      * {@inheritdoc}
-     *
-     * @throws \InvalidArgumentException
      */
     public function fetchResourcesWithConstraint(array $relationships, Constraint $constraint, SortCollection $sortCollection)
     {
@@ -129,8 +127,6 @@ class DoctrineResourceRepository implements ResourceRepository, ResourceCounter
 
     /**
      * {@inheritdoc}
-     *
-     * @throws \InvalidArgumentException
      */
     public function deleteResource($resource)
     {
@@ -140,8 +136,6 @@ class DoctrineResourceRepository implements ResourceRepository, ResourceCounter
 
     /**
      * {@inheritdoc}
-     *
-     * @throws \InvalidArgumentException
      */
     public function saveResource($resource)
     {
@@ -151,8 +145,6 @@ class DoctrineResourceRepository implements ResourceRepository, ResourceCounter
 
     /**
      * {@inheritdoc}
-     *
-     * @throws \InvalidArgumentException
      * @throws NonUniqueResultException
      */
     public function countResourcesWithFilters(array $relationships, CompositeFilter $filterCollection)
@@ -211,8 +203,6 @@ class DoctrineResourceRepository implements ResourceRepository, ResourceCounter
      * @param SortCollection $sortCollection
      *
      * @return QueryBuilder
-     *
-     * @throws \InvalidArgumentException
      */
     private function createQuery($prefix, array $relationships, Constraint $constraint, SortCollection $sortCollection)
     {
@@ -236,8 +226,6 @@ class DoctrineResourceRepository implements ResourceRepository, ResourceCounter
     /**
      * @param QueryBuilder    $queryBuilder
      * @param CompositeFilter $compositeFilter
-     *
-     * @throws \InvalidArgumentException
      */
     private function addFilters(QueryBuilder $queryBuilder, CompositeFilter $compositeFilter)
     {
@@ -252,8 +240,6 @@ class DoctrineResourceRepository implements ResourceRepository, ResourceCounter
      * @param string          $baseKey
      *
      * @return string
-     *
-     * @throws \InvalidArgumentException
      */
     private function createFilterExpressions(QueryBuilder $queryBuilder, CompositeFilter $compositeFilter, $baseKey)
     {
@@ -301,8 +287,6 @@ class DoctrineResourceRepository implements ResourceRepository, ResourceCounter
      * @param string $columnName
      *
      * @return string
-     *
-     * @throws \InvalidArgumentException
      */
     private function joinAliasAndColumnName($alias, $columnName)
     {
@@ -314,8 +298,6 @@ class DoctrineResourceRepository implements ResourceRepository, ResourceCounter
 
     /**
      * @param string $string
-     *
-     * @throws \InvalidArgumentException
      */
     private function validateIdentifier($string)
     {

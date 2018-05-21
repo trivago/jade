@@ -33,9 +33,6 @@ class GenericResourceManagerTest extends BaseTest
      */
     protected $fieldResolverProphecy;
 
-    /**
-     * @throws \ReflectionException
-     */
     public function testCreateValid()
     {
         $toOneRelationship = new ToOneRelationship('test', 'FakeClass', 1);
@@ -61,9 +58,6 @@ class GenericResourceManagerTest extends BaseTest
         self::assertFalse($entity->isUpdatedCalled());
     }
 
-    /**
-     * @throws \ReflectionException
-     */
     public function testCreateNotExisting()
     {
         $this->expectException(\LogicException::class);
@@ -80,9 +74,6 @@ class GenericResourceManagerTest extends BaseTest
         $genericResourceManager->create($attributes, $relationships, TestEntity::class);
     }
 
-    /**
-     * @throws \ReflectionException
-     */
     public function testCreateInvalidReturnObject()
     {
         $this->expectException(\LogicException::class);

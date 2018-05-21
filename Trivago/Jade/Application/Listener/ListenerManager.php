@@ -268,8 +268,6 @@ class ListenerManager
      * @param string        $resourceName
      *
      * @return EntityRequest
-     *
-     * @throws \LogicException
      */
     public function onGetEntityRequest(EntityRequest $request, $resourceName)
     {
@@ -298,8 +296,6 @@ class ListenerManager
      * @param string            $resourceName
      *
      * @return CollectionRequest
-     *
-     * @throws \LogicException
      */
     public function onGetCollectionRequest(CollectionRequest $request, $resourceName)
     {
@@ -328,8 +324,6 @@ class ListenerManager
      * @param string        $resourceName
      *
      * @return CreateRequest
-     *
-     * @throws \LogicException
      */
     public function onCreateRequest(CreateRequest $request, $resourceName)
     {
@@ -358,8 +352,6 @@ class ListenerManager
      * @param string        $resourceName
      *
      * @return UpdateRequest
-     *
-     * @throws \LogicException
      */
     public function onUpdateRequest(UpdateRequest $request, $resourceName)
     {
@@ -388,8 +380,6 @@ class ListenerManager
      * @param string        $resourceName
      *
      * @return DeleteRequest
-     *
-     * @throws \LogicException
      */
     public function onDeleteRequest(DeleteRequest $request, $resourceName)
     {

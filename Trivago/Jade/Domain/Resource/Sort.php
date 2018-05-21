@@ -36,7 +36,6 @@ class Sort
      * @param string $path
      * @param string $direction
      *
-     * @throws \InvalidArgumentException
      * @throws InvalidPath
      */
     public function __construct($path, $direction)

@@ -94,8 +94,6 @@ class FieldResolverTest extends BaseTest
      * @param array  $parameters
      * @param string $exceptionClass
      * @param bool   $missingEntities
-     *
-     * @throws \ReflectionException
      */
     public function testValidCases(
         $method,

@@ -45,9 +45,6 @@ class ResourceConfigProvider
      * @param string                  $defaultReadRole
      * @param string                  $defaultManipulateRole
      * @param string                  $createMethod
-     *
-     * @throws \InvalidArgumentException
-     * @throws \ReflectionException
      */
     public function __construct(
         ResourceConfigValidator $configValidator,
@@ -101,9 +98,6 @@ class ResourceConfigProvider
     /**
      * @param string $name
      * @return ResourceConfig
-     *
-     * @throws \InvalidArgumentException
-     *
      */
     public function getResourceConfig($name)
     {
@@ -135,8 +129,6 @@ class ResourceConfigProvider
     /**
      * @param array $rawResourceConfig
      * @param array $processedConfigs
-     *
-     * @throws \InvalidArgumentException
      */
     private function extendParentConfig(array &$rawResourceConfig, array $processedConfigs)
     {

@@ -38,7 +38,6 @@ class ExpressionFilter extends Filter
      * @param mixed  $value
      *
      * @throws InvalidPath
-     * @throws \InvalidArgumentException
      */
     public function __construct($path, $type, $value)
     {
@@ -51,8 +50,6 @@ class ExpressionFilter extends Filter
     /**
      * @param string $type
      * @param mixed  $value
-     *
-     * @throws \InvalidArgumentException
      */
     public static function validate($type, $value)
     {

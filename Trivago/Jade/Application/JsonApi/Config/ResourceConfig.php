@@ -115,8 +115,6 @@ class ResourceConfig
      * @param array $data
      *
      * @return ResourceConfig
-     *
-     * @throws \InvalidArgumentException
      */
     public static function createWithData($data)
     {
@@ -235,8 +233,6 @@ class ResourceConfig
      * @param string $attributeName
      *
      * @return AttributePermission[][]
-     *
-     * @throws \InvalidArgumentException
      */
     public function getAttributePermissionsFor($attributeName)
     {
@@ -284,8 +280,6 @@ class ResourceConfig
      * @param string $name
      *
      * @return ResourceRelationship
-     *
-     * @throws \LogicException
      */
     public function getRelationship($name)
     {
@@ -331,8 +325,6 @@ class ResourceConfig
      * @param string $attributeName
      *
      * @return array
-     *
-     * @throws \InvalidArgumentException
      */
     public function getValueObjectFor($attributeName)
     {

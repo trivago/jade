@@ -64,10 +64,6 @@ class RuntimeResourceMapper implements ResourceMapper
 
     /**
      * {@inheritdoc}
-     *
-     * @throws \LogicException
-     * @throws \InvalidArgumentException
-     * @throws \ReflectionException
      */
     public function getResourceMapping($resourceName, $resource)
     {
@@ -86,9 +82,6 @@ class RuntimeResourceMapper implements ResourceMapper
      * @param ResourceConfig   $resourceConfig
      * @param object           $resource
      * @param ResourceMapping  $mapping
-     *
-     * @throws \LogicException
-     * @throws \InvalidArgumentException
      */
     private function setupAttributes(\ReflectionClass $reflection, ResourceConfig $resourceConfig, $resource, ResourceMapping $mapping)
     {
@@ -146,8 +139,6 @@ class RuntimeResourceMapper implements ResourceMapper
      * @param AttributePermission[][] $permissions
      *
      * @return bool
-     *
-     * @throws \LogicException
      */
     private function hasPermission($resource, $permissions)
     {

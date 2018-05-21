@@ -37,8 +37,6 @@ class ResourceRelationshipBag
      * @param string $relationshipName
      *
      * @return Relationship
-     *
-     * @throws \InvalidArgumentException
      */
     public function getValue($relationshipName)
     {

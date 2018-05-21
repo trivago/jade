@@ -54,8 +54,6 @@ class ResourceMapping
      * @param string $name
      *
      * @return Property
-     *
-     * @throws \InvalidArgumentException
      */
     public function getProperty($name)
     {
@@ -95,8 +93,6 @@ class ResourceMapping
      * @param string $name
      *
      * @return Property
-     *
-     * @throws \InvalidArgumentException
      */
     public function getRelationship($name)
     {

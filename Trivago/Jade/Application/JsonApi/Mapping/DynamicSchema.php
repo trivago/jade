@@ -93,8 +93,6 @@ class DynamicSchema extends SchemaProvider
      * @param object $resource
      *
      * @return array
-     *
-     * @throws \LogicException
      */
     public function getAttributes($resource)
     {
@@ -126,7 +124,6 @@ class DynamicSchema extends SchemaProvider
     /**
      * {@inheritdoc}
      *
-     * @throws \InvalidArgumentException
      * @throws InvalidModelPath
      */
     public function getRelationships($resource, $isPrimary, array $includeRelationships)
@@ -199,8 +196,6 @@ class DynamicSchema extends SchemaProvider
      * @param mixed $value
      *
      * @return string|array
-     *
-     * @throws \LogicException
      */
     protected function getSimpleValue($value)
     {

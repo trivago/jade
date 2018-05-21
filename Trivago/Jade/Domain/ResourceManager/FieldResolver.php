@@ -52,10 +52,7 @@ class FieldResolver
      * @return ResolvedMethodParameters
      *
      * @throws MissingEntity
-     * @throws \LogicException
      * @throws InvalidModelSet
-     * @throws \InvalidArgumentException
-     * @throws \ReflectionException
      */
     public function resolveMethodParameters(
         $class,
@@ -86,7 +83,6 @@ class FieldResolver
      * @return mixed
      *
      * @throws InvalidModelSet
-     * @throws \InvalidArgumentException
      */
     private function resolveAttribute(\ReflectionParameter $reflectionParameter, array &$attributeNames, ResourceAttributeBag $resourceAttributeBag)
     {
@@ -104,8 +100,6 @@ class FieldResolver
      *
      * @throws MissingEntity
      * @throws InvalidModelSet
-     * @throws \LogicException
-     * @throws \InvalidArgumentException
      */
     private function resolveRelationship(\ReflectionParameter $reflectionParameter, array &$relationshipNames, ResourceRelationshipBag $resourceRelationshipBag)
     {
@@ -119,7 +113,6 @@ class FieldResolver
      *
      * @return array|object
      *
-     * @throws \LogicException
      * @throws MissingEntity
      */
     public function getRelationshipValue(Relationship $relationship)
