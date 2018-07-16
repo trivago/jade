@@ -441,13 +441,10 @@ class RequestFactory
                 }
                 throw InvalidRequest::createWithMessage('data.relationships.'.$relationshipName.'.data', 'invalid_value', 'Relationship can not be null in create request.');
             }
-            $this->validateKeys('data.relationships.'.$relationshipName.'.data', $rawRelationship, ['id', 'type']);
             $relationshipType = $this->resourceConfigProvider->getResourceConfig($data['type'])->getRelationship($relationshipName)->getType();
             $entityClass = $this->resourceConfigProvider->getResourceConfig($relationshipType)->getEntityClass();
             if (isset($dataAsObject->relationships->$relationshipName->data) && is_object($dataAsObject->relationships->$relationshipName->data)) {
-                if (!isset($rawRelationship['id'])) {
-                    throw InvalidRequest::createWithMessage('data.relationships.'.$relationshipName.'.data.id', 'invalid_value', 'Missing id of a relationship '.$relationshipName);
-                }
+                $this->validateKeys('data.relationships.'.$relationshipName.'.data', $rawRelationship, ['id', 'type']);
                 $id = $rawRelationship['id'];
                 $this->validateRelationshipType(
                     $rawRelationship,
@@ -459,11 +456,12 @@ class RequestFactory
             }
             $ids = [];
             foreach ($rawRelationship as $key => $singleRelationship) {
-               $this->validateRelationshipType(
-                   $singleRelationship,
-                   $relationshipName,
-                   sprintf('data.relationships.%s.data[%d].type', $relationshipName, $key)
-               );
+                $this->validateKeys('data.relationships.'.$relationshipName.'.data['.$key.']', $singleRelationship, ['id', 'type']);
+                $this->validateRelationshipType(
+                    $singleRelationship,
+                    $relationshipName,
+                    sprintf('data.relationships.%s.data[%d].type', $relationshipName, $key)
+                );
 
                 $ids[] = $singleRelationship['id'];
             }
