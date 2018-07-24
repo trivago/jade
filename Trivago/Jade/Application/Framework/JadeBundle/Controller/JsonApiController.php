@@ -476,10 +476,10 @@ class JsonApiController extends Controller
     }
 
     /**
-     * @param string        $resourceName
-     * @param string        $action
+     * @param string      $resourceName
+     * @param string      $action
      *
-     * @param null|object   $entity
+     * @param null|object $entity
      */
     protected function checkAccess($resourceName, $action, $entity = null)
     {
