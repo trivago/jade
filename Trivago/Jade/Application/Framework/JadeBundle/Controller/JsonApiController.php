@@ -296,7 +296,7 @@ class JsonApiController extends Controller
         $this->listenerManager->onDeleteRequest($request, $resourceName);
         $repository = $this->getRepository($resourceName);
         $entity = $repository->fetchOneResource($id, []);
-        $this->checkAccess($resourceName, ResourceConfig::ACTION_READ, $entity);
+        $this->checkAccess($resourceName, ResourceConfig::ACTION_DELETE, $entity);
 
         $encoder = $this->getEncoder();
         if (!$entity) {
@@ -493,6 +493,9 @@ class JsonApiController extends Controller
                 break;
             case ResourceConfig::ACTION_UPDATE:
                 $role = $resourceConfig->getUpdateRole();
+                break;
+            case ResourceConfig::ACTION_DELETE:
+                $role = $resourceConfig->getDeleteRole();
                 break;
             case ResourceConfig::ACTION_READ:
                 $role = $resourceConfig->getReadRole();
