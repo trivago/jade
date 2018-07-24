@@ -228,25 +228,18 @@ class JsonApiController extends Controller
 
         if ($this->getParameter('json_api_fetch_total_count')) {
             if (!$repository instanceof ResourceCounter) {
-                throw new \LogicException(
-                    sprintf(
-                        'You have enabled fetch_total_count option. The repository for %s should implement ResourceCounter',
-                        get_class($repository)
-                    )
-                );
+                throw new \LogicException(sprintf(
+                    'You have enabled fetch_total_count option. The repository for %s should implement ResourceCounter',
+                    get_class($repository)
+                ));
             }
             $data['meta']['totalItems'] = $repository->countResourcesWithFilters(
                 $request->getRelationships(),
                 $request->getConstraint()->getFilterCollection()
             );
 
-            $data['meta']['totalPages'] = (int) (abs($data['meta']['totalItems'] - 1) / $request->getConstraint(
-                )->getPerPage() + 1);
-            $data['links'] = $this->buildLinks(
-                $httpRequest,
-                $request->getConstraint()->getPageNumber(),
-                $data['meta']['totalPages']
-            );
+            $data['meta']['totalPages'] = (int) (abs($data['meta']['totalItems']-1)/$request->getConstraint()->getPerPage() + 1);
+            $data['links'] = $this->buildLinks($httpRequest, $request->getConstraint()->getPageNumber(), $data['meta']['totalPages']);
         } else {
             $data['links'] = $this->buildLinks($httpRequest, $request->getConstraint()->getPageNumber(), null);
         }
@@ -276,7 +269,6 @@ class JsonApiController extends Controller
         $this->listenerManager->onGetEntityRequest($request, $resourceName);
         $repository = $this->getRepository($resourceName);
         $entity = $repository->fetchOneResource($id, $request->getRelationships());
-
         $this->checkAccess($resourceName, ResourceConfig::ACTION_READ, $entity);
 
         $encoder = $this->getEncoder($request->getRelationships());
@@ -300,11 +292,11 @@ class JsonApiController extends Controller
      */
     protected function deleteEntity($resourceName, $id)
     {
-        $this->checkAccess($resourceName, ResourceConfig::ACTION_READ);
         $request = $this->requestFactory->createDeleteRequest($resourceName, $id);
         $this->listenerManager->onDeleteRequest($request, $resourceName);
         $repository = $this->getRepository($resourceName);
         $entity = $repository->fetchOneResource($id, []);
+        $this->checkAccess($resourceName, ResourceConfig::ACTION_READ, $entity);
 
         $encoder = $this->getEncoder();
         if (!$entity) {
@@ -336,9 +328,7 @@ class JsonApiController extends Controller
         $request = $this->requestFactory->createCreateRequest($httpRequest, $resourceName);
         $request = $this->listenerManager->onCreateRequest($request, $resourceName);
 
-        $resourceManagerServiceId = $this->resourceConfigProvider->getResourceConfig(
-            $resourceName
-        )->getManagerServiceId();
+        $resourceManagerServiceId = $this->resourceConfigProvider->getResourceConfig($resourceName)->getManagerServiceId();
         /** @var ResourceManager $manager */
         $manager = $this->get($resourceManagerServiceId);
 
@@ -360,8 +350,7 @@ class JsonApiController extends Controller
             $this->getEncoder($includeRelationships)->encodeData($entity),
             JsonApiResponse::HTTP_OK,
             [],
-            true
-        );
+            true);
     }
 
     /**
@@ -376,28 +365,22 @@ class JsonApiController extends Controller
      */
     protected function updateEntity($resourceName, $id, Request $httpRequest)
     {
-        $this->checkAccess($resourceName, ResourceConfig::ACTION_UPDATE);
         $repository = $this->getRepository($resourceName);
 
         $entity = $repository->fetchOneResource($id, []);
 
+        $this->checkAccess($resourceName, ResourceConfig::ACTION_UPDATE, $entity);
+
         if (!$entity) {
             $error = new Error(null, null, null, 'not_found', sprintf('No %s found with id %s', $resourceName, $id));
 
-            return new JsonApiResponse(
-                $this->getEncoder()->encodeError($error),
-                JsonApiResponse::HTTP_NOT_FOUND,
-                [],
-                true
-            );
+            return new JsonApiResponse($this->getEncoder()->encodeError($error), JsonApiResponse::HTTP_NOT_FOUND, [], true);
         }
 
         $request = $this->requestFactory->createUpdateRequest($httpRequest, $resourceName, $id);
         $request = $this->listenerManager->onUpdateRequest($request, $resourceName);
 
-        $resourceManagerServiceId = $this->resourceConfigProvider->getResourceConfig(
-            $resourceName
-        )->getManagerServiceId();
+        $resourceManagerServiceId = $this->resourceConfigProvider->getResourceConfig($resourceName)->getManagerServiceId();
         /** @var ResourceManager $manager */
         $manager = $this->get($resourceManagerServiceId);
 
@@ -435,11 +418,7 @@ class JsonApiController extends Controller
         /** @var ResourceMapper $resourceMapper */
         $resourceMapper = $this->get('trivago_jade.resource_mapper');
         foreach ($this->resourceConfigProvider->getResourceConfigs() as $resourceConfig) {
-            $schemaClosure = function (FactoryInterface $factory) use (
-                $resourceConfig,
-                $resourceMapper,
-                $requestedRelationships
-            ) {
+            $schemaClosure = function (FactoryInterface $factory) use ($resourceConfig, $resourceMapper, $requestedRelationships) {
                 $schemaProviderClass = $resourceConfig->getSchemaProvider();
                 $schema = new $schemaProviderClass(
                     $factory,
@@ -497,10 +476,10 @@ class JsonApiController extends Controller
     }
 
     /**
-     * @param string      $resourceName
-     * @param string      $action
+     * @param string        $resourceName
+     * @param string        $action
      *
-     * @param null|object $entity
+     * @param null|object   $entity
      */
     protected function checkAccess($resourceName, $action, $entity = null)
     {
@@ -553,32 +532,16 @@ class JsonApiController extends Controller
                 $message = 'Duplicate entry';
             }
             $errors = [new Error('data', null, null, 'model_unique', $message)];
-        } elseif ($exception instanceof ForeignKeyConstraintViolationException) {
-            $errors = [
-                new Error(
-                    'data',
-                    null,
-                    null,
-                    'model_integrity',
-                    sprintf('There is another resource using this resource.')
-                ),
-            ];
-        } elseif ($exception instanceof InvalidModelSet) {
-            $errors = [
-                new Error(
-                    'data.'.$exception->getAttribute(),
-                    null,
-                    null,
-                    $exception->getType(),
-                    $exception->getMessage()
-                ),
-            ];
-        } elseif ($exception instanceof InvalidRequest) {
+        }  elseif ($exception instanceof ForeignKeyConstraintViolationException) {
+            $errors = [new Error('data', null, null, 'model_integrity', sprintf('There is another resource using this resource.'))];
+        }  elseif ($exception instanceof InvalidModelSet) {
+            $errors = [new Error('data.'.$exception->getAttribute(), null, null, $exception->getType(), $exception->getMessage())];
+        }  elseif ($exception instanceof InvalidRequest) {
             $errors = $exception->getErrors();
-        } elseif ($exception instanceof ModelException) {
+        }  elseif ($exception instanceof ModelException) {
             $errors = [new Error('data', null, null, $exception->getType(), $exception->getMessage())];
-        } else {
-            throw $exception;
+        }  else {
+           throw $exception;
         }
 
         return $this->createErrorResponse($errors);
@@ -609,20 +572,16 @@ class JsonApiController extends Controller
     private function buildLinks(Request $httpRequest, $currentPage, $totalPages)
     {
         $querySeparatorPos = strpos($httpRequest->getUri(), '?');
-        $baseUrl = false !== $querySeparatorPos ? substr(
-            $httpRequest->getUri(),
-            0,
-            $querySeparatorPos
-        ) : $httpRequest->getUri();
+        $baseUrl = false !== $querySeparatorPos ? substr($httpRequest->getUri(), 0, $querySeparatorPos) : $httpRequest->getUri();
         $query = $httpRequest->query->all();
 
         $links = [];
         $links['self'] = $this->createPageLink($baseUrl, $query, $currentPage);
         $links['first'] = $this->createPageLink($baseUrl, $query, 1);
         if ($currentPage > 1) {
-            $links['prev'] = $this->createPageLink($baseUrl, $query, $currentPage - 1);
+            $links['prev'] = $this->createPageLink($baseUrl, $query, $currentPage-1);
         }
-        $links['next'] = $this->createPageLink($baseUrl, $query, $currentPage + 1);
+        $links['next'] = $this->createPageLink($baseUrl, $query, $currentPage+1);
         if (null !== $totalPages) {
             $links['last'] = $this->createPageLink($baseUrl, $query, $totalPages);
             if ($currentPage == $totalPages) {
@@ -642,7 +601,7 @@ class JsonApiController extends Controller
         $baseUrl = $request->getSchemeAndHttpHost().$request->getBaseUrl().$request->getPathInfo();
 
         $baseUrlParts = explode('/', $baseUrl);
-        for ($i = 0; $i < $pathPartsCount; $i ++) {
+        for ($i=0; $i<$pathPartsCount; $i++) {
             array_pop($baseUrlParts);
         }
 
