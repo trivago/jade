@@ -430,6 +430,14 @@ class ResourceConfig
     /**
      * @return string
      */
+    public function getDeleteRole()
+    {
+        return $this->getRoleFor(self::ACTION_DELETE);
+    }
+
+    /**
+     * @return string
+     */
     public function getReadRole()
     {
         return $this->getRoleFor(self::ACTION_READ);

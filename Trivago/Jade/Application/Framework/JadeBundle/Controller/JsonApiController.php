@@ -265,11 +265,11 @@ class JsonApiController extends Controller
      */
     protected function getEntity($resourceName, $id, Request $httpRequest)
     {
-        $this->checkAccess($resourceName, ResourceConfig::ACTION_READ);
         $request = $this->requestFactory->createEntityRequest($httpRequest->query, $resourceName, $id);
         $this->listenerManager->onGetEntityRequest($request, $resourceName);
         $repository = $this->getRepository($resourceName);
         $entity = $repository->fetchOneResource($id, $request->getRelationships());
+        $this->checkAccess($resourceName, ResourceConfig::ACTION_READ, $entity);
 
         $encoder = $this->getEncoder($request->getRelationships());
         if (!$entity) {
@@ -292,11 +292,11 @@ class JsonApiController extends Controller
      */
     protected function deleteEntity($resourceName, $id)
     {
-        $this->checkAccess($resourceName, ResourceConfig::ACTION_READ);
         $request = $this->requestFactory->createDeleteRequest($resourceName, $id);
         $this->listenerManager->onDeleteRequest($request, $resourceName);
         $repository = $this->getRepository($resourceName);
         $entity = $repository->fetchOneResource($id, []);
+        $this->checkAccess($resourceName, ResourceConfig::ACTION_DELETE, $entity);
 
         $encoder = $this->getEncoder();
         if (!$entity) {
@@ -365,10 +365,11 @@ class JsonApiController extends Controller
      */
     protected function updateEntity($resourceName, $id, Request $httpRequest)
     {
-        $this->checkAccess($resourceName, ResourceConfig::ACTION_UPDATE);
         $repository = $this->getRepository($resourceName);
 
         $entity = $repository->fetchOneResource($id, []);
+
+        $this->checkAccess($resourceName, ResourceConfig::ACTION_UPDATE, $entity);
 
         if (!$entity) {
             $error = new Error(null, null, null, 'not_found', sprintf('No %s found with id %s', $resourceName, $id));
@@ -475,12 +476,12 @@ class JsonApiController extends Controller
     }
 
     /**
-     * @param string $resourceName
-     * @param string $action
+     * @param string      $resourceName
+     * @param string      $action
      *
-     * @throws AccessDeniedException
+     * @param null|object $entity
      */
-    protected function checkAccess($resourceName, $action)
+    protected function checkAccess($resourceName, $action, $entity = null)
     {
         if (!$this->getParameter('json_api_security_enabled')) {
             return;
@@ -493,6 +494,9 @@ class JsonApiController extends Controller
             case ResourceConfig::ACTION_UPDATE:
                 $role = $resourceConfig->getUpdateRole();
                 break;
+            case ResourceConfig::ACTION_DELETE:
+                $role = $resourceConfig->getDeleteRole();
+                break;
             case ResourceConfig::ACTION_READ:
                 $role = $resourceConfig->getReadRole();
                 break;
@@ -500,7 +504,7 @@ class JsonApiController extends Controller
                 throw new \LogicException('Invalid action passed');
         }
 
-        $this->denyAccessUnlessGranted($role, null, 'Unable to access this api!');
+        $this->denyAccessUnlessGranted($role, $entity, 'Unable to access this api!');
     }
 
     /**
