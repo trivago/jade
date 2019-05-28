@@ -1,6 +1,6 @@
 <?php
 
-namespace AppBundle\Value;
+namespace App\Value;
 
 class Email
 {

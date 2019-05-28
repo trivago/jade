@@ -1,9 +1,9 @@
 <?php
 
-namespace AppBundle\Security;
+namespace App\Security;
 
-use AppBundle\Entity\User;
-use AppBundle\Value\Email;
+use App\Entity\User;
+use App\Value\Email;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;

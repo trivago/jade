@@ -8,5 +8,8 @@
 actor: FunctionalTester
 modules:
     enabled:
+        - Symfony:
+            app_path: 'src'
+            environment: 'test'
         # add a framework module here
         - \Helper\Functional
