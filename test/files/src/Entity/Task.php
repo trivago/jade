@@ -1,8 +1,8 @@
 <?php
 
-namespace AppBundle\Entity;
+namespace App\Entity;
 
-use AppBundle\Value\TaskStatuses;
+use App\Value\TaskStatuses;
 use Doctrine\ORM\Mapping as ORM;
 use Webmozart\Assert\Assert;
 

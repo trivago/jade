@@ -12,7 +12,7 @@ trivago_jade:
     resources:
         -
             name: users
-            entity_class: AppBundle\Entity\User
+            entity_class: App\Entity\User
             allowed_actions: [create, update, delete]
             relationships:
                 -
@@ -22,10 +22,10 @@ trivago_jade:
                     name: assignedTasks
                     type: tasks
             value_objects:
-                email: AppBundle\Value\Email
+                email: App\Value\Email
         -
             name: tasks
-            entity_class: AppBundle\Entity\Task
+            entity_class: App\Entity\Task
             allowed_actions: [create, update, delete]
             relationships:
                 -

@@ -4,9 +4,9 @@ security:
 
     # https://symfony.com/doc/current/security.html#b-configuring-how-users-are-loaded
     providers:
-        doctrine:
+        user_entity:
             entity:
-                class: AppBundle\Entity\User
+                class: App\Entity\User
                 property: email
 
     firewalls:
@@ -19,7 +19,8 @@ security:
             anonymous: ~
             logout: ~
             stateless: true
+            provider: user_entity
 
             guard:
                 authenticators:
-                    - AppBundle\Security\EmailAuthenticator
+                    - App\Security\EmailAuthenticator

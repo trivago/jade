@@ -15,11 +15,8 @@
         "neomerx/json-api": "^1.0",
         "doctrine/orm": "^2.5",
         "doctrine/doctrine-bundle": "^1.6",
-        "symfony/security": "^3.0|^4.0",
-        "symfony/http-foundation": "^3.0|^4.0",
-        "symfony/config": "^3.0|^4.0",
-        "symfony/dependency-injection": "^3.0|^4.0",
-        "symfony/routing": "^3.0|^4.0",
+        "symfony/doctrine-bridge": "^3.0|^4.0",
+        "symfony/security-bundle": "^3.0|^4.0",
         "symfony/framework-bundle": "^3.0|^4.0"
     },
     "authors": [
@@ -29,10 +26,11 @@
         }
     ],
     "require-dev": {
-        "phpunit/phpunit": "^5.7",
-        "phpspec/prophecy": "^1.7",
+        "webmozart/assert": "^1.4",
+        "codeception/codeception": "^2.3",
         "fzaninotto/faker": "^1.7",
-        "php-di/phpdoc-reader": "^2.0",
-        "codeception/codeception": "^2.3"
+        "phpspec/prophecy": "^1.7",
+        "phpunit/phpunit": "^5.7",
+        "php-di/phpdoc-reader": "^2.0"
     }
 }

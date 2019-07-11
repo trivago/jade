@@ -7,3 +7,5 @@ modules:
             part: Json
         - Symfony:
             var_path: var
+            app_path: 'src'
+            environment: 'test'

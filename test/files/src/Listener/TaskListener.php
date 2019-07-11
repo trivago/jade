@@ -1,9 +1,9 @@
 <?php
 
-namespace AppBundle\Listener;
+namespace App\Listener;
 
-use AppBundle\Entity\Task;
-use AppBundle\Validator\BlacklistWordsValidator;
+use App\Entity\Task;
+use App\Validator\BlacklistWordsValidator;
 use Trivago\Jade\Application\Listener\CreateListener;
 use Trivago\Jade\Application\Listener\UpdateListener;
 

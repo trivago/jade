@@ -1,10 +1,10 @@
 <?php
 
-namespace AppBundle\Listener;
+namespace App\Listener;
 
-use AppBundle\Entity\Task;
-use AppBundle\Entity\User;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
+use App\Entity\Task;
+use App\Entity\User;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Trivago\Jade\Application\JsonApi\Request\CollectionRequest;
 use Trivago\Jade\Application\JsonApi\Request\CreateRequest;
 use Trivago\Jade\Application\JsonApi\Request\DeleteRequest;
@@ -18,15 +18,15 @@ use Trivago\Jade\Domain\ResourceManager\Bag\ToOneRelationship;
 class OwnerListener implements RequestListener, DeleteListener
 {
     /**
-     * @var TokenStorage
+     * @var TokenStorageInterface
      */
     private $tokenStorage;
 
     /**
      * OwnerListener constructor.
-     * @param TokenStorage $tokenStorage
+     * @param TokenStorageInterface $tokenStorage
      */
-    public function __construct(TokenStorage $tokenStorage)
+    public function __construct(TokenStorageInterface $tokenStorage)
     {
         $this->tokenStorage = $tokenStorage;
     }

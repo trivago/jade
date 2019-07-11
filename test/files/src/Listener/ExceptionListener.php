@@ -1,6 +1,6 @@
 <?php
 
-namespace AppBundle\Listener;
+namespace App\Listener;
 
 use Trivago\Jade\Application\JsonApi\Error\Error;
 
