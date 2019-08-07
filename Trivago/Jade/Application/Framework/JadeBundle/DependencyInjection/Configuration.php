@@ -38,9 +38,8 @@ class Configuration implements ConfigurationInterface
      */
     public function getConfigTreeBuilder()
     {
-        $treeBuilder = new TreeBuilder();
-        $rootNode = $treeBuilder->root('trivago_jade');
-        $rootNode
+        $treeBuilder = new TreeBuilder('trivago_jade');
+        $treeBuilder->getRootNode()
             ->validate()
                 ->ifTrue(function($values) {
                     $values['security']['enabled'] && (!$values['security']['default_manipulate_role'] || $values['security']['default_read_role']);
