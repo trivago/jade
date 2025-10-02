@@ -1,6 +1,10 @@
 Jade(Json Api Doctrine Exposer)
 =============
 
+> [!CAUTION]
+> This repository has been archived as of October 2025.  
+> If you wish to update or extend this project, please create a fork.
+
 What is it?
 -------------
 Jade is a library created in an effort to create a simple way to create Json API server using doctrine entities.
